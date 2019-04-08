@@ -6,8 +6,13 @@ frac = \.digit+
 exp = [eE][\-\+]?digit+
 float digit*frac+ exp?
 
-newline = \r|\n|
-string = ([\'\"]) [^newline]* (1)
+newline = \r|\n
+string = shortbytes | longbytes
+shortbytes     ::=  ([\'\"]) ([^newline(1)\\]|bytesescapeseq)*? (1)
+longbytes      ::=  "'''" longbytesitem*? "'''" | '"""' longbytesitem*? '"""'
+longbytesitem  ::=  longbyteschar | bytesescapeseq
+longbyteschar  ::=  [^\\]
+bytesescapeseq ::=  \\. 
 whitespace ([\ \t])+
 %%
 
