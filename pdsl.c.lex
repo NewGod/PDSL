@@ -1,11 +1,10 @@
 ident = [a-zA-Z\_][a-zA-Z0-9\_]*
 
 digit = [0-9]
-unint = digit+
-int = \-?digit+
+int = digit+
 frac = \.digit+
 exp = [eE][\-\+]?digit+
-float \-?digit*frac+ exp?
+float digit*frac+ exp?
 
 newline = \r|\n|
 string = ([\'\"]) [^newline]* (1)
@@ -31,10 +30,8 @@ whitespace {return WHITESPACE}
  */ 
 string {return STRING}
 
- /*数字类型（可能要写在一起）*/
-unint {return NUM_UNINT;}
-int {return NUM_INT;}
-float {return NUM_FLOAT} 
+ /*数字类型（写在一起直接当double处理）*/
+int|float {return NUM} 
 
  /*赋值运算符*/
 "=" {return ASSIGN}
