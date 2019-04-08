@@ -2,10 +2,10 @@ ident = [a-zA-Z\_][a-zA-Z0-9\_]*
 
 digit = [0-9]
 unint = digit+
-int = digit+
+int = \-?digit+
 frac = \.digit+
 exp = [eE][\-\+]?digit+
-float digit*frac+ exp?
+float \-?digit*frac+ exp?
 
 newline = \r|\n|
 string = ([\'\"]) [^newline]* (1)
