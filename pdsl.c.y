@@ -74,8 +74,8 @@ recurr
 	LCP sentence_list RCP
 	;
 interval
-	: ( exp , exp) |
-	  (exp , exp, exp)
+	: LP exp COMMA exp RP |
+	  LP exp COMMA exp COMMA exp RP
 	 ;
 
 // = 从右往左
@@ -96,12 +96,12 @@ t6: t7 CROSS t6 | t7
 
 t7: MINUS t8 | NOT t8 | t8 //直接取负号
 
-t8: LP exp RP | UNINT | INT | FLOAT | STRING | IDENT | IDENT ( P_List ) | IDENT_list
+t8: LP exp RP | UNINT | INT | FLOAT | STRING | IDENT | IDENT LP P_List LP | IDENT_list
 
 P_List:
-	EMPTY | exp | exp , P_List
+	EMPTY | exp | exp COMMA P_List
 
 IDENT_list:
-	IDENT | IDENT(P_List) | IDENT DOT IDENT_list 
-	| IDENT(P_List) DOT IDNET_list
+	IDENT | IDENT LP P_List RP | IDENT DOT IDENT_list 
+	| IDENT LP P_List RP DOT IDNET_list
 %%
