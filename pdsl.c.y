@@ -70,7 +70,7 @@ branch
 	;
 
 recurr 
-	: FOR IDENT in interval
+	: FOR IDENT IN interval
 	LCP sentence_list RCP
 	;
 interval
