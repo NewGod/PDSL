@@ -71,7 +71,7 @@ branch
 
 recurr 
 	: FOR IDENT IN interval
-	codeblock
+	code_block
 	;
 interval
 	: LP exp COMMA exp RP |
@@ -96,12 +96,12 @@ t6: t7 CROSS t6 | t7
 
 t7: MINUS t8 | NOT t8 | t8 //直接取负号
 
-t8: LP exp RP | NUM | STRING | IDENT | IDENT LP P_List LP | IDENT_list
+t8: LP exp RP | NUM | STRING | IDENT | IDENT LP p_list LP | ident_list
 
-P_List:
-	EMPTY | exp | exp COMMA P_List
+p_list:
+	EMPTY | exp | exp COMMA p_list
 
-IDENT_list:
-	IDENT | IDENT LP P_List RP | IDENT DOT IDENT_list 
-	| IDENT LP P_List RP DOT IDNET_list
+ident_list:
+	IDENT | IDENT LP P_list RP | IDENT DOT IDENT_list 
+	| IDENT LP P_list RP DOT IDNET_list
 %%
