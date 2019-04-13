@@ -96,7 +96,7 @@ t6: t7 CROSS t6 | t7
 
 t7: MINUS t8 | NOT t8 | t8 //直接取负号
 
-t8: LP exp RP | UNINT | INT | FLOAT | STRING | IDENT | IDENT LP P_List LP | IDENT_list
+t8: LP exp RP | NUM | STRING | IDENT | IDENT LP P_List LP | IDENT_list
 
 P_List:
 	EMPTY | exp | exp COMMA P_List
