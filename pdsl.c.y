@@ -2,8 +2,8 @@
 %%
 
 sentence_list
-	: /*empty*/
-	: sentence sentence_list 
+	: %empty
+	| sentence sentence_list
 	;
 
 sentence /*每个sentence就是一个基本处理单元*/
@@ -29,8 +29,8 @@ relation_exp
 	;
 
 single_assign_list /*公制单位换算，这样写不会出现递归问题*/
-	: /*empty*/
-	: single_assign_list single_assign
+	: %empty
+	| single_assign_list single_assign
 	;
 
 single_assign
@@ -43,8 +43,9 @@ func_def
 	;
 
 para_list
-	: /*empty*/
+	:%empty
 	| para_list COMMA para
+	| para
 	;
 
 para
@@ -65,8 +66,8 @@ code_block
 	RCP
 
 branch
-	: if LP exp RP code_block ELSE code_block 
-	| if LP exp RP code_block
+	: IF LP exp RP code_block ELSE code_block 
+	| IF LP exp RP code_block
 	;
 
 recurr 
@@ -80,7 +81,7 @@ interval
 
 // = 从右往左
 // 其余算符从左往右
-exp: t1 assign exp | t1
+exp: t1 ASSIGN exp | t1
 
 t1: t2 EQ t1 | t2 NEQ t1 | t2
 
@@ -99,9 +100,9 @@ t7: MINUS t8 | NOT t8 | t8 //直接取负号
 t8: LP exp RP | NUM | STRING | IDENT | IDENT LP p_list LP | ident_list
 
 p_list:
-	EMPTY | exp | exp COMMA p_list
+	%empty | exp | exp COMMA p_list
 
 ident_list:
-	IDENT | IDENT LP P_list RP | IDENT DOT ident_list 
+	IDENT | IDENT LP p_list RP | IDENT DOT ident_list 
 	| IDENT LP p_list RP DOT ident_list
 %%
