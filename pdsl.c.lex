@@ -19,6 +19,7 @@ whitespace {return WHITESPACE}
 "def" {return DEF} /*函数定义*/
 "return" {return RETURN} /*返回值*/
 "if" {return IF} 
+"in" {return IN}
 "for" {return FOR} 
 ":" {return COLON}
 "." {return DOT} /*类成员*/
