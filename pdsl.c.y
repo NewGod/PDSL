@@ -39,12 +39,12 @@ single_assign
 
 
 func_def
-	: DEF IDENT LP paralist RP code_block
+	: DEF IDENT LP para_list RP code_block
 	;
 
-paralist
+para_list
 	: /*empty*/
-	| paralist COMMA para
+	| para_list COMMA para
 	;
 
 para
@@ -102,6 +102,6 @@ p_list:
 	EMPTY | exp | exp COMMA p_list
 
 ident_list:
-	IDENT | IDENT LP P_list RP | IDENT DOT IDENT_list 
-	| IDENT LP P_list RP DOT IDNET_list
+	IDENT | IDENT LP P_list RP | IDENT DOT ident_list 
+	| IDENT LP p_list RP DOT ident_list
 %%
