@@ -68,10 +68,10 @@ int|float {return NUM}
 "#" {return COMMENT} 
 
  /*左右括号*/
-"(" {return LBRACKETS} 
-"(" {return RBRACKETS} 
-"{" {return LCURBRACKETS} /*考虑用c的代码块表示方式？用python的好实现么？*/
-"}" {return RCURBRACKETS}
+"(" {return LP} 
+")" {return RR} 
+"{" {return LCP} /*考虑用c的代码块表示方式？用python的好实现么？*/
+"}" {return RCP}
 "[" {return LSQUBRACKETS} 
 "]" {return RSQUBARCKETS} 
 
