@@ -71,7 +71,7 @@ branch
 
 recurr 
 	: FOR IDENT IN interval
-	LCP sentence_list RCP
+	codeblock
 	;
 interval
 	: LP exp COMMA exp RP |
