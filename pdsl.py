@@ -16,25 +16,27 @@ class PhyManager:
     def __init__(self):
         pass
 
-    def add_var(self, name: str, base: str):
+    def add_var(self, name: str, base: str, vector=False):
         """
         register a new variable
         """
         pass
 
-    def decode(self, val: float, unit: str) -> Tuple[int, Dict[str, float]]:
+    def decode(self, unit: str) -> Tuple[Dict[str, float], float]:
         """
-        return a normalize express
+        return a normalize express and it's rate
+        example:
+        decode("km") -> {"Dist", 1}, 0.001
         """
         pass
 
     def encode(self, unit: Dict[str, float]) -> str:
         """
-        encode a normalize expres
+        encode a normalize express
         """
         pass
 
-    def add_subunit(self, base: str, sub: str, rate: float) -> str:
+    def add_subunit(self, base: str, sub: str, rate: float):
         """
         1 base = rate sub
         """
@@ -42,7 +44,7 @@ class PhyManager:
 
 
 class PhyVar:
-    def __init__(self, val: float, unit: str):
+    def __init__(self, val: Union[float, Tuple[float]], unit: str):
         pass
 
     def __eq__(self, value: 'PhyVar') -> bool:
@@ -76,3 +78,17 @@ class PhyVar:
             a = balabala
         """
         pass
+
+    def format(self, unit: str) -> str:
+        """
+        return a string with a specific unit
+        """
+        pass
+
+    def __len__(self) -> float:
+        pass
+
+    def dim(self) -> float:
+        pass
+
+
