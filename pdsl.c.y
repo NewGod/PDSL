@@ -44,7 +44,9 @@ func_def
 
 para_list
 	:%empty
-	| para_list COMMA para
+	| non_empty_para_list
+non_empty_para_list:
+	non_empty_para_list COMMA para
 	| para
 	;
 
@@ -100,7 +102,11 @@ t7: MINUS t8 | NOT t8 | t8 //直接取负号
 t8: LP exp RP | NUM | STRING | IDENT | IDENT LP p_list LP | ident_list
 
 p_list:
-	%empty | exp | exp COMMA p_list
+	%empty
+	| non_empty_p_list
+non_empty_p_list: 
+	exp 
+	| exp COMMA non_empty_p_list
 
 ident_list:
 	IDENT | IDENT LP p_list RP | IDENT DOT ident_list 
