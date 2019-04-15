@@ -45,6 +45,8 @@ func_def
 para_list
 	:%empty
 	| non_empty_para_list
+	;
+	
 non_empty_para_list:
 	non_empty_para_list COMMA para
 	| para
@@ -66,6 +68,7 @@ code_block
 	: LCP 
 		sentence_list 
 	RCP
+	;
 
 branch
 	: IF LP exp RP code_block ELSE code_block 
@@ -84,31 +87,53 @@ interval
 // = 从右往左
 // 其余算符从左往右
 exp: t1 ASSIGN exp | t1
+	;
 
 t1: t2 EQ t1 | t2 NEQ t1 | t2
+	;
 
 t2: t3 AND t2 | t3 OR t2 | t3
+	;
 
 t3: t4 GT t3 | t4 LE t3 | t4 GEQ t3 | t4 LEQ t3 | t4
+	;
 
 t4: t5 PLUS t4 | t5 MINUS t4 | t5
+	;
 
 t5: t6 MOD t5 | t6 MULTI t5 | t6 DIV t5 | t6
+	;
 
 t6: t7 CROSS t6 | t7
+	;
 
 t7: MINUS t8 | NOT t8 | t8 //直接取负号
+	;
 
-t8: LP exp RP | NUM | STRING | IDENT | IDENT LP p_list LP | ident_list
+t8: LP exp RP | var
+	;
+
+var:
+	basic_exp //constant with or without unit
+	| ident_list //expression from var or a series of objects
+	;
+basic_exp:
+	NUM
+	| NUM STRING
+	;
 
 p_list:
 	%empty
 	| non_empty_p_list
+	;
+	
 non_empty_p_list: 
 	exp 
 	| exp COMMA non_empty_p_list
+	;
 
 ident_list:
 	IDENT | IDENT LP p_list RP | IDENT DOT ident_list 
 	| IDENT LP p_list RP DOT ident_list
+	;
 %%
