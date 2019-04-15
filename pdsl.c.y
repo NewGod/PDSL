@@ -136,20 +136,44 @@ t7
 	: MINUS t8 
 	| NOT t8 
 	| t8 //直接取负号
+	| t8 dot_list
+	;
+	
+dot_list
+	: DOT ident dot_list //第一个点后面就没有常数或者括号的表示了,按一个旁支处理
+	| DOT ident
+	;
+	
+ident
+	: IDENT
+	| ident LP p_list RP //对于函数调用如此处理，允许函数对象的出现
 	;
 
 t8 
 	: LP exp RP 
 	| var /*TODO: 还差一个. 和 函数a(p_list)*/
+	| t8 LP p_list RP //函数调用和var地位一致
 	;
 
 var
 	: basic_exp //constant with or without unit
 	| IDENT
 	;
+	
 basic_exp
+	: num_exp
+	| num_exp STRING
+	;
+	
+num_exp
 	: NUM
-	| NUM STRING
+	| LP num_list RP
+	| LMP num_list LMP
+	;
+	
+num_list
+	: NUM
+	| NUM COMMA num_list
 	;
 
 p_list
