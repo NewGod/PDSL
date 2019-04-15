@@ -13,6 +13,7 @@ class PhyManager:
     add_var and add_subunit for class define
     and decode and encode for PhyVar
     """
+
     def __init__(self):
         pass
 
@@ -90,5 +91,3 @@ class PhyVar:
 
     def dim(self) -> float:
         pass
-
-
