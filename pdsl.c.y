@@ -14,7 +14,7 @@ sentence /*每个sentence就是一个基本处理单元*/
 
 class_def /*TODO：可选语句的支持，顺序不一定要是确定的*/
 	: CLASS IDENT LCP 
-		NAME ASSIGN IDENT 
+		NAME ASSIGN STRING
 		/*optional: RELATION ASSIGN relation_exp*/
 		/*optional: TYPE VECTOR/SCALAR (default: scalar)*/
 		single_assign_list 
@@ -34,7 +34,7 @@ single_assign_list /*公制单位换算，这样写不会出现递归问题*/
 	;
 
 single_assign
-	: NUM IDENT ASSIGN NUM IDENT 
+	: NUM STRING ASSIGN NUM relation_exp
 	;
 
 
