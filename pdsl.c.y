@@ -25,7 +25,7 @@ relation_exp
 	: relation MULTI relation_exp  
 	| relation DIV relation_exp
 	| LP relation RP 
-	| IDENT
+	| STRING POW NUM
 	;
 
 single_assign_list /*公制单位换算，这样写不会出现递归问题*/
@@ -162,7 +162,7 @@ var
 	
 basic_exp
 	: num_exp
-	| num_exp STRING
+	| num_exp relation_exp
 	;
 	
 num_exp
