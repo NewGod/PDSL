@@ -61,6 +61,7 @@ int|float {return NUM}
 "*" {return MULTI} 
 "/" {return DIV}
 "%" {return MOD}
+"\^" {return POW}
 "cross" {return CROSS}
 
  /*Python format commet 
@@ -73,8 +74,8 @@ int|float {return NUM}
 ")" {return RR} 
 "{" {return LCP} /*考虑用c的代码块表示方式？用python的好实现么？*/
 "}" {return RCP}
-"[" {return LSQUBRACKETS} 
-"]" {return RSQUBARCKETS} 
+"[" {return LMP} 
+"]" {return RMP} 
 
 "relation" {return RELATION}
 "type" {return TYPE}
