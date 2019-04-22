@@ -34,7 +34,7 @@ single_assign_list /*公制单位换算，这样写不会出现递归问题*/
 	;
 
 single_assign
-	: NUM STRING ASSIGN NUM relation_exp
+	: NUM STRING ASSIGN NUM STRING
 	;
 
 
