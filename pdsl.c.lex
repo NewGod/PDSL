@@ -24,6 +24,7 @@ whitespace {return WHITESPACE}
 "def" {return DEF} /*函数定义*/
 "return" {return RETURN} /*返回值*/
 "if" {return IF} 
+"in" {return IN}
 "for" {return FOR} 
 ":" {return COLON}
 "." {return DOT} /*类成员*/
@@ -65,6 +66,7 @@ int|float {return NUM}
 "*" {return MULTI} 
 "/" {return DIV}
 "%" {return MOD}
+"\^" {return POW}
 "cross" {return CROSS}
 
  /*Python format commet 
@@ -73,12 +75,12 @@ int|float {return NUM}
 "#" {return COMMENT} 
 
  /*左右括号*/
-"(" {return LBRACKETS} 
-"(" {return RBRACKETS} 
-"{" {return LCURBRACKETS} /*考虑用c的代码块表示方式？用python的好实现么？*/
-"}" {return RCURBRACKETS}
-"[" {return LSQUBRACKETS} 
-"]" {return RSQUBARCKETS} 
+"(" {return LP} 
+")" {return RR} 
+"{" {return LCP} /*考虑用c的代码块表示方式？用python的好实现么？*/
+"}" {return RCP}
+"[" {return LMP} 
+"]" {return RMP} 
 
 "relation" {return RELATION}
 "type" {return TYPE}
