@@ -1,4 +1,4 @@
-from typing import Dict, Union, Tuple
+from typing import Dict, Union, Tuple, List
 
 """
 A variable formate list:
@@ -41,6 +41,9 @@ class PhyManager:
         """
         1 base = rate sub
         """
+        pass
+
+    def set_dim(self, dim: int):
         pass
 
 
@@ -87,7 +90,26 @@ class PhyVar:
         pass
 
     def __len__(self) -> float:
+        """
+        return the len of the variable
+        example:
+        a = (3, 4)N
+        len(a) = 5 "N?"
+        """
         pass
 
-    def dim(self) -> float:
+    def get_dim(self, key: int) -> float:
         pass
+
+    def get_slice(self, start: int, end: int, step: int) -> List:
+        pass
+
+    def __setitem__(self, key: int, value: float):
+        pass
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return self.get_dim(key)
+        elif isinstance(key, slice):
+            start, end, step = key
+            return self.get_slice(start, end, step)
