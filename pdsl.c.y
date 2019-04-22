@@ -26,6 +26,7 @@ relation_exp
 	| relation DIV relation_exp
 	| LP relation RP 
 	| STRING POW NUM
+	| STRING
 	;
 
 single_assign_list /*公制单位换算，这样写不会出现递归问题*/
