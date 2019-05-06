@@ -19,6 +19,7 @@ let sub f k x y =
   	| None, Some f -> Some (-f)
   	| Some f1, Some f2 -> Some (f1 -. f2);;
 
+
 open String
 %}
 
@@ -65,6 +66,7 @@ class_def
 		}
 		/*optional: RELATION ASSIGN relation_exp*/
 		maybe_relation
+
 		/*optional: TYPE VECTOR/SCALAR (default: scalar)*/
 		single_assign_list 
 	RCP
@@ -76,6 +78,7 @@ class_def
 		let curr_idtstr = String.sub curr_idtstr, 1, indent_cnt;;
 	}
 	;
+
 
 maybe_relation:
 	%empty
@@ -99,6 +102,7 @@ relation_exp
 	| relation_exp DIV relation
 	{
 		Stringmap.merge sub $1 $3
+
 	}
 	| relation
 	{
@@ -122,6 +126,7 @@ relation:
 		let m = Stringmap.empty;;
 		let m = Stringmap.add $1 1.0 m;;
 		m
+
 	}
 	;
 
@@ -144,12 +149,14 @@ single_assign
 func_def
 	: DEF IDENT LP para_list RP 
 	{
+
 		printf_endline curr_idtstr ^ "def" ^ $2 ^ "(" ^ $4 ^ "):";;
 	}
 	code_block
 	{
 		let var_table = Stringmap.add $2 func_cnt var_table;;
 	}
+
 	;
 
 para_list
@@ -251,8 +258,10 @@ interval
 exp
 	: IDENT ASSIGN exp 
 	{
+
 		$1 ^ " = " ^ $3;;
 		let var_table = Stringmap.add $1 func_cnt var_table;;
+
 	}
 	| t1
 	{
@@ -414,6 +423,7 @@ t8
 		(*what is the API?*)
 		(*I suppose that's not correct*)
 		"PhyVar(" ^ $1 ^ "," ^ tmp.contents ^ ")"
+
 	}
 	| var
 	{
