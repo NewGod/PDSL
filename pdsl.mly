@@ -1,8 +1,24 @@
 %{
 let indent_cnt = 0;;
 let curr_idtstr = "";;
-let val_table = {};;
-let class_table = {};;
+let func_cnt = 0;;
+let curr_name = "";;
+module Stringmap = Map.Make(String);;
+let var_table = Stringmap.empty;;
+let class_table = Stringmap.empty;;
+let add f k x y = 
+  	match x,y with
+  	None,None -> Some 0.0
+  	| Some f, None -> Some f
+  	| None, Some f -> Some f
+  	| Some f1, Some f2 -> Some (f1 +. f2);;
+let sub f k x y = 
+  	match x,y with
+  	None,None -> Some 0.0
+  	| Some f, None -> Some f
+  	| None, Some f -> Some (-f)
+  	| Some f1, Some f2 -> Some (f1 -. f2);;
+
 open String
 %}
 
@@ -43,9 +59,12 @@ class_def
 	}
 		NAME ASSIGN IDENT BOUNDARY
 		{
-			printf_endline "Phymanager.addclass(" ^ $2 ^ "," ^ $6 ^ ")"
+			printf_endline curr_idtstr ^ "Phymanager.addclass(" ^ $2 ^ "," ^ $6 ^ ")";;
+			let class_table = Stringmap.add $2 func_cnt class_table;;
+			let curr_name = $6;;
 		}
 		/*optional: RELATION ASSIGN relation_exp*/
+		maybe_relation
 		/*optional: TYPE VECTOR/SCALAR (default: scalar)*/
 		single_assign_list 
 	RCP
@@ -58,14 +77,28 @@ class_def
 	}
 	;
 
-relation_exp
-	: relation MULTI relation_exp  
+maybe_relation:
+	%empty
+	| RELATION ASSIGN relation_exp BOUNDARY
 	{
-		$1 ^ "*" ^ $3
+		let tmp = ref "{";;
+		let addstring k v:
+			tmp := tmp.contents ^ "'" k ^ "':" ^ (stringoffloat v) ^ ",";;
+		Stringmap.iter addstring $3;;
+		tmp := tmp.contents ^ "}";;
+		(*what is the API?*)
+		printf_endline curr_idtstr ^ "Phymanager.addrelation(" ^ curr_name ^ "," ^ tmp.contents ^ ")"
+		(*I suppose that's not correct*)
 	}
-	| relation DIV relation_exp
+
+relation_exp
+	: relation_exp MULTI relation
 	{
-		$1 ^ "/" ^ $3
+		Stringmap.merge add $1 $3
+	}
+	| relation_exp DIV relation
+	{
+		Stringmap.merge sub $1 $3
 	}
 	| relation
 	{
@@ -76,15 +109,19 @@ relation_exp
 relation:
 	| LP relation_exp RP 
 	{
-		"(" ^ $2 ^ ")"
+		$2
 	}
 	| IDENT POWER NUM
 	{
-		$1 ^ "**" ^ $3
+		let m = Stringmap.empty;;
+		let m = Stringmap.add $1 (float_of_string $3) m;;
+		m
 	}
 	| IDENT
 	{
-		$1
+		let m = Stringmap.empty;;
+		let m = Stringmap.add $1 1.0 m;;
+		m
 	}
 	;
 
@@ -107,9 +144,12 @@ single_assign
 func_def
 	: DEF IDENT LP para_list RP 
 	{
-		printf_endline curr_idtstr ^ "def" ^ $2 ^ "(" ^ $4 ^ "):"
+		printf_endline curr_idtstr ^ "def" ^ $2 ^ "(" ^ $4 ^ "):";;
 	}
 	code_block
+	{
+		let var_table = Stringmap.add $2 func_cnt var_table;;
+	}
 	;
 
 para_list
@@ -211,7 +251,8 @@ interval
 exp
 	: IDENT ASSIGN exp 
 	{
-		$1 ^ " = " ^ $3
+		$1 ^ " = " ^ $3;;
+		let var_table = Stringmap.add $1 func_cnt var_table;;
 	}
 	| t1
 	{
@@ -365,7 +406,14 @@ t8
 	}
 	| exp relation_exp
 	{
-		"PhyVar(" ^ $1 ^ "," ^ $2 ^ ")"
+		let tmp = ref "{";;
+		let addstring k v:
+			tmp := tmp.contents ^ "'" k ^ "':" ^ (stringoffloat v) ^ ",";;
+		Stringmap.iter addstring $2;;
+		tmp := tmp.contents ^ "}";;
+		(*what is the API?*)
+		(*I suppose that's not correct*)
+		"PhyVar(" ^ $1 ^ "," ^ tmp.contents ^ ")"
 	}
 	| var
 	{
