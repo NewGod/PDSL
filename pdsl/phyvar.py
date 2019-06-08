@@ -1,5 +1,5 @@
 from typing import Dict, Union, List, Optional
-from pdsl.glob import decode_unit, encode_unit, Unit
+from pdsl.glob import decode_unit, encode_unit, Unit, unit2str
 from copy import copy
 import numpy as np
 from numbers import Number
@@ -36,8 +36,8 @@ def compare_unit(x: Unit, y: Unit) -> bool:
 
 
 class PhyVar:
-    def __init__(self, val: Union[float, List[float]], unit: Union[str, Unit]):
-        if isinstance(unit, str):
+    def __init__(self, val: Union[float, List[float]], unit: Unit, is_ori=False):
+        if is_ori:
             unit, rate = decode_unit(unit)
         else:
             rate = 1
@@ -150,7 +150,7 @@ class PhyVar:
         return PhyVar(val, unit)
 
     def __str__(self) -> str:
-        return str(self.val) + encode_unit(self.unit)
+        return str(self.val) + unit2str(encode_unit(self.unit))
 
     def set_val(self, var: 'PhyVar'):
         """
@@ -170,12 +170,20 @@ class PhyVar:
         self.is_vector = var.is_vector
         return
 
-    def format(self, unit: str) -> str:
+    def format(self, unit: Unit) -> str:
         """
         return a string with a specific unit
         """
-        # TODO: Need to design the format commend
-        raise NotImplementedError
+        tmp, rate = decode_unit(unit)
+        print(tmp, self.unit)
+        if compare_unit(self.unit, tmp):
+            raise Exception(
+                "The variable cannot tranform to the specific unit")
+        if (self.is_vector):
+            ret = list(x * rate for x in self.val)
+        else:
+            ret = self.val * rate
+        return str(ret) + unit2str(unit)
 
     @property
     def len(self) -> float:
