@@ -20,8 +20,8 @@ class TestPhyVar(unittest.TestCase):
     def test_init(self):
         with patch('pdsl.phyvar.decode_unit') as func:
             func.return_value = (self.unit, 0.001)
-            a = PhyVar(1, 'N')
-            func.assert_called_once_with('N')
+            a = PhyVar(1, {'N': 1}, is_ori=True)
+            func.assert_called_once_with({'N': 1})
             self.assertDictEqual(a.unit, self.unit)
             self.assertEqual(a.val, 1000)
             self.assertEqual(a.is_vector, False)
@@ -150,7 +150,7 @@ class TestPhyVar(unittest.TestCase):
 
     def test_str(self):
         with patch("pdsl.phyvar.encode_unit") as func:
-            func.return_value = 'N'
+            func.return_value = {'N': 1}
             a = PhyVar([2, 0], self.unit)
             b = PhyVar([2], self.unit)
             self.assertEqual(str(a), str([2., 0.]) + 'N')
@@ -158,9 +158,12 @@ class TestPhyVar(unittest.TestCase):
             self.assertEqual(str(b), str([2.]) + 'N')
             func.assert_called_with(self.unit)
 
-    @unittest.skip('PhyVar.format unfinish')
     def test_format(self):
-        pass
+        with patch('pdsl.phyvar.decode_unit') as func:
+            func.return_value = (self.unit, 0.001)
+            a = PhyVar(1, {'N': 1}, True)
+            self.assertEqual(a.format({'N': 1}), '1.0N')
+            func.assert_called_with({'N': 1})
 
     @patch('builtins.print')
     def test_setval(self, func):
