@@ -1,11 +1,11 @@
 {
-		open Parser
+		open Pdsl_parser
         open Printf
         exception Eof
 }
 
 let letter = ['a'-'z' 'A'-'Z']
-let ident = ['a'-'z' 'A'-'Z' '_']['a'-'z' 'A'-'Z' '0'-'9' '_']*
+let ident = (['a'-'z' 'A'-'Z' '_'])(['a'-'z' 'A'-'Z' '0'-'9' '_'])*
 
 let digit = ['0'-'9']
 let int = digit+
@@ -21,17 +21,17 @@ let longbytes      =  "'''" longbytesitem*? "'''" | "\"\"\"" longbytesitem*? "\"
 
 let whitespace = [' ' '\t' '\r' '\n']+
 let string = shortbytes | longbytes
-
+let newline = '\n'
 let num = int | float
 
 
 rule token = parse
 whitespace {token lexbuf} 
-| newline {NEWLINE}
 | "class" {printf("class ");CLASS} 
 | "def" {printf("def ");DEF} 
 | "return" {printf("return ");RETURN} 
 | "if" {printf("if ");IF} 
+| "else" {printf("else");ELSE}
 | "in" {printf("in ");IN}
 | "for" {printf("for ");FOR} 
 | "false" {printf("false ");FALSE}
@@ -46,8 +46,8 @@ whitespace {token lexbuf}
 | "scalar" {printf("scalar ");SCALAR}
 | "cross" {printf("cross ");CROSS}
 | string {printf("string ");STRING}
-| ident {printf("ident ");IDENT}
-| num {printf("num ");NUM} 
+| ident as lxm {printf("ident ");IDENT(lxm)}
+| num as lxm {printf("num ");NUM(lxm)} 
 | ":" {printf("COLON ");COLON}
 | ";" {printf "BOUNDARY ";BOUNDARY}
 | "." {printf("DOT ");DOT} 
