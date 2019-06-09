@@ -1,5 +1,5 @@
 from typing import Dict, Union, List, Optional
-from pdsl.glob import decode_unit, encode_unit, Unit, unit2str
+from pdsl.phymanager import decode_unit, encode_unit, Unit, unit2str
 from copy import copy
 import numpy as np
 from numbers import Number
