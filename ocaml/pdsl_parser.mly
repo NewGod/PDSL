@@ -28,44 +28,46 @@ let mult a =
 open String
 %}
 
-		%token<string> NUM IDENT
+		%token<string> NUM IDENT STRING
         %token CLASS DEF RETURN IF ELSE IN RELATION TYPE COMMENT
         %token FOR FALSE TRUE LOG_AND LOG_OR LOG_NOT
-        %token NAME VECTOR SCALAR CROSS STRING
+        %token NAME VECTOR SCALAR CROSS
         %token DOT COLON COMMA NOT OR AND POWER XOR
         %token PLUS MINUS MULTI DIV MOD
         %token LP RP LMP RMP LCP RCP BOUNDARY
         %token ASSIGN EQ GEQ LEQ GT LE NEQ
+        %right ASSIGN
         %left PLUS MINUS        /* lowest precedence */
         %left MULTI DIV         /* medium precedence */
-        %right ASSIGN
         %start main             /* the entry point */
         %type <int> main
 %%
 
 main:
-	sentence_list {0}
+	sentence_list 
+	{print_endline("main");0}
 	;
 
 sentence_list: 
 	 epsilon {$1}
-	| sentence sentence_list {}
+	| sentence sentence_list {print_endline("sentence_list")}
 	;
 
 epsilon:
-	{}
+	{print_endline("epsilon")}
 	;
 
 sentence 
-	: class_def {}
+	: class_def {print_endline("class_def")}
 	| func_def {}
 	| single_sentence {}
 	;
 
 class_def 
 	: 
-		basic_class_def
+	basic_class_def
 		/*optional: RELATION ASSIGN relation_exp*/
+		maybe_name
 		maybe_relation 
 		/*optional: TYPE VECTOR/SCALAR (default: scalar)*/
 		single_assign_list
@@ -73,12 +75,21 @@ class_def
 	;
 
 basic_class_def:
-	CLASS IDENT LCP NAME ASSIGN IDENT BOUNDARY
-		{
-			class_table := (Stringmap.add $2 func_cnt class_table.contents);
-			curr_name := $2;
-			print_endline (curr_idtstr.contents ^ "Phymanager.add_var('" ^ $2 ^ "','" ^ $6 ^ "')")
-		};
+	CLASS IDENT LCP
+	{
+		class_table := (Stringmap.add $2 func_cnt class_table.contents);
+		curr_name := $2
+	};
+
+maybe_name:
+	epsilon
+	{
+		print_endline (curr_idtstr.contents ^ "Phymanager.add_var('" ^ curr_name.contents ^ "',None)")
+	}
+	| NAME ASSIGN IDENT BOUNDARY
+	{
+		print_endline (curr_idtstr.contents ^ "Phymanager.add_var('" ^ curr_name.contents ^ "','" ^ $3 ^ "')")
+	};
 
 maybe_relation:
 	epsilon {$1}
@@ -88,7 +99,7 @@ maybe_relation:
 		Stringmap.iter addstring $3;
 		tmp := tmp.contents ^ "}";
 		(*what is the API?*)
-		print_endline (curr_idtstr.contents ^ "Phymanager.add_relation(" ^ curr_name.contents ^ "," ^ tmp.contents ^ ")")
+		print_endline (curr_idtstr.contents ^ "Phymanager.add_relation('" ^ curr_name.contents ^ "'," ^ tmp.contents ^ ")")
 		(*I suppose that's not correct*)
 	}
 	;
@@ -155,7 +166,7 @@ single_assign_list
 single_assign
 	: NUM IDENT ASSIGN NUM IDENT
 	{
-		"Phymanager.add_subunit(" ^ $2 ^ "," ^ $5 ^ "," ^ string_of_float((float_of_string $4) /. (float_of_string $1)) ^ ")"
+		"Phymanager.add_subunit('" ^ $2 ^ "','" ^ $5 ^ "'," ^ string_of_float((float_of_string $4) /. (float_of_string $1)) ^ ")"
 	}
 	;
 
@@ -270,11 +281,16 @@ recurr
 basic_recurr:
 	FOR IDENT IN interval
 		{
-			print_endline (curr_idtstr.contents ^ "for" ^ $2 ^ "in" ^ $4 ^ ":")
+			print_endline (curr_idtstr.contents ^ "for " ^ $2 ^ " in " ^ $4 ^ ":")
 		};
 
 interval
-	: LP t1 COMMA t1 RP 
+	: 
+	LP t1 RP
+	{
+		"range(" ^ $2 ^ ")"
+	}
+	| LP t1 COMMA t1 RP 
 	{
 		"range(" ^ $2 ^ "," ^ $4 ^ ")"
 	}
@@ -297,13 +313,13 @@ exp
 	;
 
 t1
-	: t2 EQ t1 
+	: t2 LOG_AND t1 
 	{
-		$1 ^ "==" ^ $3
+		$1 ^ " and " ^ $3
 	}
-	| t2 NEQ t1 
+	| t2 LOG_OR t1 
 	{
-		$1 ^ "!=" ^ $3
+		$1 ^ " or " ^ $3
 	}
 	| t2
 	{
@@ -312,19 +328,20 @@ t1
 	;
 
 t2
-	: t3 AND t2 
+	: t3 EQ t2 
 	{
-		$1 ^ " and " ^ $3
+		$1 ^ "==" ^ $3
 	}
-	| t3 OR t2 
+	| t3 NEQ t2 
 	{
-		$1 ^ " or " ^ $3
+		$1 ^ "!=" ^ $3
 	}
 	| t3
 	{
 		$1
 	}
 	;
+
 
 t3
 	: t4 GT t3 
@@ -399,7 +416,7 @@ t7
 	{
 		"-" ^ $2
 	}
-	| NOT t8 
+	| LOG_NOT t8 
 	{
 		"not " ^ $2
 	}
@@ -461,6 +478,10 @@ t8
 
 var
 	: num_exp
+	{
+		$1
+	}
+	| STRING
 	{
 		$1
 	}
