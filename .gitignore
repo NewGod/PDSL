@@ -1,3 +1,5 @@
 .pytype/
 __pycache__/
 *.pyc
+bin/
+build/
