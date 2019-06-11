@@ -1,0 +1,22 @@
+class Distance{ 
+	name = m;
+}
+class Time{
+	name = s;
+}
+class Acceleration{
+	relation = Distance / Time ** 2;
+}
+class Mass{ 
+	name = kg;
+}
+class Force {
+	name = N;
+	relation = Mass * Acceleration;
+}
+a = 1[m];
+b = 1[s];
+c = a / b / b;
+print(c);
+d = 1[kg];
+print(c * d);
