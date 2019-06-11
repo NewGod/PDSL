@@ -38,17 +38,18 @@ name2unit: Dict[str, UnitInfo] = {}
 unit2name: Dict[str, str] = {}
 
 
-def add_var(name: str, base: str, vector=False):
+def add_var(name: str, base: Optional[str], vector=False):
     """
     register a new variable
     """
     if name in name2unit:
         raise Exception(f"Unit {name} has been defined")
-    if base in unit2name:
+    if base is not None and base in unit2name:
         raise Exception(f"Unit {base} has been defined")
     unit = UnitInfo(name, base)
     name2unit[name] = unit
-    unit2name[base] = name
+    if base is not None:
+        unit2name[base] = name
 
 
 def get_base_unit(name: str) -> Unit:
@@ -108,6 +109,8 @@ def encode_unit(unit: Unit) -> Unit:
     check_name(unit)
     ret: Unit = {}
     for name, power in unit.items():
+        if name2unit[name].base is None:
+            raise Exception(f"Unit {name} don't have a base Unit")
         ret[name2unit[name].base] = power
     return ret
 

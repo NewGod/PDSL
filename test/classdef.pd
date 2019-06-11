@@ -1,7 +1,7 @@
 class Mass{ 
 	name = kg;
 	1kg = 1000g;
-	1kg = 0.001g;
+	1kg = 0.001t;
 }
 class Distance{ 
 	name = m;
