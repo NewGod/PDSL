@@ -69,10 +69,8 @@ sentence
 class_def 
 	: 
 	basic_class_def
-		/*optional: RELATION ASSIGN relation_exp*/
 		maybe_name
 		maybe_relation 
-		/*optional: TYPE VECTOR/SCALAR (default: scalar)*/
 		single_assign_list
 	RCP {}
 	;
@@ -100,9 +98,7 @@ maybe_relation:
 		tmp := "{";
 		Stringmap.iter addstring $3;
 		tmp := tmp.contents ^ "}";
-		(*what is the API?*)
 		print_endline (curr_idtstr.contents ^ "Phymanager.add_relation('" ^ curr_name.contents ^ "'," ^ tmp.contents ^ ")")
-		(*I suppose that's not correct*)
 	}
 	;
 
@@ -430,8 +426,6 @@ t8
 		tmp := "{";
 		Stringmap.iter addstring $3;
 		tmp := tmp.contents ^ "}";
-		(*what is the API?*)
-		(*I suppose that's not correct*)
 		"PhyVar(" ^ $1 ^ "," ^ tmp.contents ^ ",True)"
 	}
 	| var
@@ -464,18 +458,18 @@ num_exp
 	{
 		$1
 	}
-	| LMP num_list LMP
+	| LMP num_list RMP
 	{
 		"(" ^ $2 ^ ")"
 	}
 	;
 	
 num_list
-	: NUM
+	: t1
 	{
 		$1
 	}
-	| num_list COMMA NUM
+	| num_list COMMA t1
 	{
 		$1 ^ "," ^ $3
 	}
