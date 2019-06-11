@@ -209,11 +209,7 @@ non_empty_para_list
 	;
 
 para
-	: IDENT COLON IDENT
-	{
-		$1 ^ ":" ^ $3
-	}
-	| IDENT
+	: IDENT
 	{
 		$1
 	}

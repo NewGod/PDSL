@@ -5,7 +5,7 @@ rm -rf build/
 mkdir build/
 cd build/
 ocamllex ../ocaml/pdsl_lexer.mll -o pdsl_lexer.ml
-menhir ../ocaml/pdsl_parser.mly --base pdsl_parser
+ocamlyacc -b pdsl_parser ../ocaml/pdsl_parser.mly 
 ocamlc -c pdsl_parser.mli
 ocamlc -c pdsl_lexer.ml
 ocamlc -c pdsl_parser.ml
