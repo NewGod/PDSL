@@ -36,8 +36,8 @@ whitespace {token lexbuf}
 | "for" {printf("for ");FOR} 
 | "false" {printf("false ");FALSE}
 | "true" {printf("true ");TRUE} 
-| "and" {printf("and ");LOG_AND}
-| "or" {printf("or ");LOG_OR} 
+| "and" {printf("log_and ");LOG_AND}
+| "or" {printf("log_or ");LOG_OR} 
 | "not" {printf("not ");LOG_NOT}
 | "relation" {printf("relation ");RELATION}
 | "type" {printf("type ");TYPE}
@@ -45,15 +45,15 @@ whitespace {token lexbuf}
 | "vector" {printf("vector ");VECTOR} 
 | "scalar" {printf("scalar ");SCALAR}
 | "cross" {printf("cross ");CROSS}
-| string {printf("string ");STRING}
+| string as lxm {printf("string ");STRING(lxm)}
 | ident as lxm {printf("ident ");IDENT(lxm)}
 | num as lxm {printf("num ");NUM(lxm)} 
 | ":" {printf("COLON ");COLON}
 | ";" {printf "BOUNDARY ";BOUNDARY}
 | "." {printf("DOT ");DOT} 
 | "," {printf("COMMA ");COMMA}
-| "=" {printf("ASSIGN ");ASSIGN}
 | "==" {printf("EQ ");EQ} 
+| "=" {printf("ASSIGN ");ASSIGN}
 | "!=" {printf("NEQ ");NEQ} 
 | ">=" {printf("GEQ ");GEQ} 
 | "<=" {printf("LEQ ");LEQ} 
