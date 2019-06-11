@@ -1,0 +1,21 @@
+class Force{ 
+	name = N;
+}
+cnt = 1 N;
+for i in (5 + 5){
+	a = i N;
+	cnt = cnt + a;
+	print(cnf);
+}
+
+for i in (2N/1N, 10){
+	a = i N;
+	cnt = cnt + a;
+	print(cnf);
+}
+
+for i in (2, 10, 2){
+	a = i N;
+	cnt = cnt + a;
+	print(cnf);
+}

@@ -1,0 +1,6 @@
+class Force {
+	name = N;
+}
+a = 1N;
+b = 1N;
+print(a + b);

@@ -1,0 +1,21 @@
+class Force{
+	name = N;
+}
+a = 1N;
+if a == 1N{ 
+	print("True");
+}else{
+	print("False");
+}
+
+if a == 1N{ 
+	print("False");
+}else{
+	print("True");
+}
+
+if ((a == 1N or not a == 2N) and a == 1N) {
+	print("True");
+}
+
+# STDOUT: True True True 
