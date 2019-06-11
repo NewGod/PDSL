@@ -27,110 +27,57 @@ let num = int | float
 
 rule token = parse
 whitespace {token lexbuf} 
-| "class" {printf("class ");CLASS} 
-| "def" {printf("def ");DEF} 
-| "return" {printf("return ");RETURN} 
-| "if" {printf("if ");IF} 
-| "else" {printf("else");ELSE}
-| "in" {printf("in ");IN}
-| "for" {printf("for ");FOR} 
-| "false" {printf("false ");FALSE}
-| "true" {printf("true ");TRUE} 
-| "and" {printf("log_and ");LOG_AND}
-| "or" {printf("log_or ");LOG_OR} 
-| "not" {printf("not ");LOG_NOT}
-| "relation" {printf("relation ");RELATION}
-| "type" {printf("type ");TYPE}
-| "name" {printf("name ");NAME}
-| "vector" {printf("vector ");VECTOR} 
-| "scalar" {printf("scalar ");SCALAR}
-| "cross" {printf("cross ");CROSS}
-| string as lxm {printf("string ");STRING(lxm)}
-| ident as lxm {printf("ident ");IDENT(lxm)}
-| num as lxm {printf("num ");NUM(lxm)} 
-| ":" {printf("COLON ");COLON}
-| ";" {printf "BOUNDARY ";BOUNDARY}
-| "." {printf("DOT ");DOT} 
-| "," {printf("COMMA ");COMMA}
-| "==" {printf("EQ ");EQ} 
-| "=" {printf("ASSIGN ");ASSIGN}
-| "!=" {printf("NEQ ");NEQ} 
-| ">=" {printf("GEQ ");GEQ} 
-| "<=" {printf("LEQ ");LEQ} 
-| ">" {printf("GT ");GT} 
-| "<" {printf("LE ");LE} 
-| "!" {printf("NOT ");NOT} 
-| "**" {printf("POWER ");POWER}
-| "^" {printf("XOR ");XOR}
-| "&" {printf("class ");AND} 
+| "class" {CLASS} 
+| "def" {DEF} 
+| "return" {RETURN} 
+| "if" {IF} 
+| "else" {ELSE}
+| "in" {IN}
+| "for" {FOR} 
+| "false" {FALSE}
+| "true" {TRUE} 
+| "and" {LOG_AND}
+| "or" {LOG_OR} 
+| "not" {LOG_NOT}
+| "relation" {RELATION}
+| "type" {TYPE}
+| "name" {NAME}
+| "vector" {VECTOR} 
+| "scalar" {SCALAR}
+| "cross" {CROSS}
+| string as lxm {STRING(lxm)}
+| ident as lxm {IDENT(lxm)}
+| num as lxm {NUM(lxm)} 
+| ":" {COLON}
+| ";" {BOUNDARY}
+| "." {DOT} 
+| "," {COMMA}
+| "==" {EQ} 
+| "=" {ASSIGN}
+| "!=" {NEQ} 
+| ">=" {GEQ} 
+| "<=" {LEQ} 
+| ">" {GT} 
+| "<" {LE} 
+| "!" {NOT} 
+| "**" {POWER}
+| "^" {XOR}
+| "&" {AND} 
 
-| "+" {printf("PLUS ");PLUS} 
-| "-" {printf("MINUS ");MINUS} 
-| "*" {printf("MULTI ");MULTI} 
-| "/" {printf("DIV ");DIV}
-| "%" {printf("MOD ");MOD}
+| "+" {PLUS} 
+| "-" {MINUS} 
+| "*" {MULTI} 
+| "/" {DIV}
+| "%" {MOD}
 
-| "#" {printf("COMMENT ");COMMENT} 
+| "#" {COMMENT} 
 
-| "(" {printf("LP ");LP} 
-| ")" {printf("RP ");RP} 
-| "{" {printf("LCP ");LCP}
-| "}" {printf("RCP ");RCP}
-| "[" {printf("LMP ");LMP} 
-| "]" {printf("RMP ");RMP} 
+| "(" {LP} 
+| ")" {RP} 
+| "{" {LCP}
+| "}" {RCP}
+| "[" {LMP} 
+| "]" {RMP} 
 | eof {raise Eof}
 
-(*rule token = parse
-whitespace {token lexbuf} 
-| "class" {printf("class ");token lexbuf} 
-| "def" {printf("def ");token lexbuf} 
-| "return" {printf("return ");token lexbuf} 
-| "if" {printf("if ");token lexbuf} 
-| "in" {printf("in ");token lexbuf}
-| "for" {printf("for ");token lexbuf} 
-| "false" {printf("false ");token lexbuf}
-| "true" {printf("true ");token lexbuf} 
-| "and" {printf("and ");token lexbuf}
-| "or" {printf("or ");token lexbuf} 
-| "not" {printf("not ");token lexbuf}
-| "relation" {printf("relation ");token lexbuf}
-| "type" {printf("type ");token lexbuf}
-| "name" {printf("name ");token lexbuf}
-| "vector" {printf("vector ");token lexbuf} 
-| "scalar" {printf("scalar ");token lexbuf}
-| "cross" {printf("cross ");token lexbuf}
-| string {printf("string ");token lexbuf}
-| ident {printf("ident ");token lexbuf}
-| num {printf("num ");token lexbuf} 
-| newline {printf "newline"; token lexbuf}
-| ":" {printf("COLON ");token lexbuf}
-| "." {printf("DOT ");token lexbuf} 
-| "," {printf("COMMA ");token lexbuf}
-| "=" {printf("ASSIGN ");token lexbuf}
-| "==" {printf("EQ ");token lexbuf} 
-| "!=" {printf("NEQ ");token lexbuf} 
-| ">=" {printf("GEQ ");token lexbuf} 
-| "<=" {printf("LEQ ");token lexbuf} 
-| ">" {printf("GT ");token lexbuf} 
-| "<" {printf("LE ");token lexbuf} 
-| "!" {printf("NOT ");token lexbuf} 
-| "**" {printf("POWER ");token lexbuf}
-| "^" {printf("XOR ");token lexbuf}
-| "&" {printf("class ");token lexbuf} 
-
-| "+" {printf("PLUS ");token lexbuf} 
-| "-" {printf("MINUS ");token lexbuf} 
-| "*" {printf("MULTI ");token lexbuf} 
-| "/" {printf("DIV ");token lexbuf}
-| "%" {printf("MOD ");token lexbuf}
-
-| "#" {printf("COMMENT ");token lexbuf} 
-
-| "(" {printf("LP ");token lexbuf} 
-| ")" {printf("RP ");token lexbuf} 
-| "{" {printf("LCP ");token lexbuf}
-| "}" {printf("RCP ");token lexbuf}
-| "[" {printf("LMP ");token lexbuf} 
-| "]" {printf("RMP ");token lexbuf} 
-| eof {raise Eof}*)
 

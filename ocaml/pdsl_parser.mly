@@ -51,12 +51,12 @@ open String
 
 main:
 	sentence_list 
-	{print_endline("main");0}
+	{0}
 	;
 
 sentence_list: 
 	 {}
-	| sentence_list sentence {print_endline("sentence_list")}
+	| sentence_list sentence {}
 	;
 
 
@@ -74,7 +74,7 @@ class_def
 		maybe_relation 
 		/*optional: TYPE VECTOR/SCALAR (default: scalar)*/
 		single_assign_list
-	RCP {print_endline("class_def")}
+	RCP {}
 	;
 
 basic_class_def:
@@ -177,7 +177,7 @@ func_def
 	: 
 	basic_func_def
 	code_block
-	{print_endline("func_def")}
+	{}
 	;
 
 basic_func_def:
@@ -234,8 +234,15 @@ code_block
 	lcp_addident 
 	sentence_list 
 	rcp_subident
-	{print_endline("code_block")}
+	{}
 	;
+
+code_block_return:
+	lcp_addident 
+	sentence_list 
+	RETURN BOUNDARY
+	rcp_subident
+	{}
 
 lcp_addident:
 	LCP
@@ -259,9 +266,9 @@ branch
 	basic_branch_if 
 	code_block 
 	basic_else
-	code_block {print_endline("branch")}
+	code_block {}
 	| basic_branch_if
-	code_block {print_endline("branch")}
+	code_block {}
 	;
 
 basic_branch_if:
@@ -277,7 +284,7 @@ basic_else:
 
 recurr 
 	: basic_recurr
-		code_block {print_endline("recurr")}
+		code_block {}
 	;
 
 basic_recurr:
@@ -310,7 +317,6 @@ exp
 	}
 	| t1
 	{
-		print_endline("exp_t1");
 		$1
 	}
 	;
@@ -318,77 +324,62 @@ exp
 t1
 	: t1 LOG_AND t1
 	{
-		print_endline("t1_and");
 		$1 ^ " and " ^ $3
 	}
 	| t1 LOG_OR t1
 	{
-		print_endline("t1_or");
 		$1 ^ " or " ^ $3
 	}
 	| t1 EQ t1 
 	{
-		print_endline("t2_eq");
 		$1 ^ "==" ^ $3
 	}
 	| t1 NEQ t1 
 	{
-		print_endline("t2_neq");
 		$1 ^ "!=" ^ $3
 	}
 	| t1 GT t1 
 	{
-		print_endline("t3_gt");
 		$1 ^ ">" ^ $3
 	}
 	| t1 LE t1 
 	{
-		print_endline("t3_le");
 		$1 ^ "<" ^ $3
 	}
 	| t1 GEQ t1 
 	{
-		print_endline("t3_geq");
 		$1 ^ ">=" ^ $3
 	}
 	| t1 LEQ t1
 	{
-		print_endline("t3_leq");
 		$1 ^ "<=" ^ $3
 	} 
 	| t1 PLUS t1 
 	{
-		print_endline("t4_plus");
 		$1 ^ "+" ^ $3
 	}
 	| t1 MINUS t1 
 	{
-		print_endline("t4_minus");
 		$1 ^ "-" ^ $3
 	}
 	| t1 MOD t1
 	{
-		print_endline("t5_mod");
 		$1 ^ "%" ^ $3
 	}
 	| t1 MULTI t1 
 	{
-		print_endline("t5_multi");
 		$1 ^ "*" ^ $3
 	}
 	| t1 DIV t1 
 	{
-		print_endline("t5_div");
 		$1 ^ "/" ^ $3
 	}
 	| t1 CROSS t1 
 	{
-		print_endline("t6_cross");
 		$1 ^ ".cross(" ^ $3 ^ ")"
 	}
 	| MINUS t1 %prec UMINUS
 	{
-		print_endline("minus");
 		"-" ^ $2
 	}
 	| LOG_NOT t1 %prec ULOG_NOT
@@ -449,7 +440,6 @@ t8
 	}
 	| var
 	{
-		print_endline("var->t8");
 		$1
 	}
 	| t8 LP p_list RP
@@ -461,17 +451,14 @@ t8
 var
 	: num_exp
 	{
-		print_endline("num_exp");
 		$1
 	}
 	| STRING
 	{
-		print_endline("string");
 		$1
 	}
 	| IDENT
 	{
-		print_endline("ident");
 		$1
 	}
 	;
