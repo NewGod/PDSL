@@ -1,6 +1,6 @@
 class Force {
 	name = N;
 }
-a = 1N;
-b = 1N;
+a = 1[N];
+b = 1[N];
 print(a + b);

@@ -5,14 +5,18 @@ class Time{
 	name = s;
 }
 class Acceleration{
-	relation = Distance / Time;
+	relation = Distance / Time ** 2;
+}
+class Mass{ 
+	name = kg;
 }
 class Force {
 	name = N;
-	relation = Acceleration / Time;
+	relation = Mass * Acceleration;
 }
-a = 1m;
-b = 1s;
-c = a / b;
+a = 1[m];
+b = 1[s];
+c = a / b / b;
 print(c);
-print(c / b);
+d = 1[kg];
+print(c * d);

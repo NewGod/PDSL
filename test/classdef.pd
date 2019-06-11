@@ -20,9 +20,9 @@ class Time{
 class Empty{
 }
 class Acceleration{
-	relation = Distance / Time
+	relation = Distance / Time;
 }
 class Force {
 	name = N;
-	relation = Acceleration / Time
+	relation = Acceleration / Time;
 }
