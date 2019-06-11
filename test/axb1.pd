@@ -1,5 +1,5 @@
 class Force {
-	name = [N];
+	name = N;
 }
 a = 1[N];
 b = 1[N];
