@@ -37,9 +37,14 @@ open String
         LP RP LMP RMP LCP RCP BOUNDARY
         ASSIGN EQ GEQ LEQ GT LE NEQ
         %right ASSIGN
+        %left LOG_AND
+        %left LOG_OR
+        %nonassoc NEQ EQ
+        %nonassoc LEQ GEQ LE GT       /* lowest precedence */
         %left PLUS MINUS        /* lowest precedence */
-        %left MULTI DIV         /* medium precedence */
+        %left MOD MULTI DIV         /* medium precedence */
         %left CROSS
+        %nonassoc UMINUS ULOG_NOT
         %start main             /* the entry point */
         %type <int> main
 %%
@@ -311,135 +316,92 @@ exp
 	;
 
 t1
-	: t1 LOG_AND t2 
+	: t1 LOG_AND t1
 	{
 		print_endline("t1_and");
 		$1 ^ " and " ^ $3
 	}
-	| t1 LOG_OR t2 
+	| t1 LOG_OR t1
 	{
 		print_endline("t1_or");
 		$1 ^ " or " ^ $3
 	}
-	| t2
-	{
-		print_endline("t2->t1");
-		$1
-	}
-	;
-
-t2
-	: t2 EQ t3 
+	| t1 EQ t1 
 	{
 		print_endline("t2_eq");
 		$1 ^ "==" ^ $3
 	}
-	| t2 NEQ t3 
+	| t1 NEQ t1 
 	{
 		print_endline("t2_neq");
 		$1 ^ "!=" ^ $3
 	}
-	| t3
-	{
-		print_endline("t3->t2");
-		$1
-	}
-	;
-
-
-t3
-	: t3 GT t4 
+	| t1 GT t1 
 	{
 		print_endline("t3_gt");
 		$1 ^ ">" ^ $3
 	}
-	| t3 LE t4 
+	| t1 LE t1 
 	{
 		print_endline("t3_le");
 		$1 ^ "<" ^ $3
 	}
-	| t3 GEQ t4 
+	| t1 GEQ t1 
 	{
 		print_endline("t3_geq");
 		$1 ^ ">=" ^ $3
 	}
-	| t3 LEQ t4
+	| t1 LEQ t1
 	{
 		print_endline("t3_leq");
 		$1 ^ "<=" ^ $3
 	} 
-	| t4
-	{
-		print_endline("t4->t3");
-		$1
-	}
-	;
-
-t4
-	: t4 PLUS t5 
+	| t1 PLUS t1 
 	{
 		print_endline("t4_plus");
 		$1 ^ "+" ^ $3
 	}
-	| t4 MINUS t5 
+	| t1 MINUS t1 
 	{
 		print_endline("t4_minus");
 		$1 ^ "-" ^ $3
 	}
-	| t5
-	{
-		print_endline("t5->t4");
-		$1
-	}
-	;
-
-t5
-	: t5 MOD t6
+	| t1 MOD t1
 	{
 		print_endline("t5_mod");
 		$1 ^ "%" ^ $3
 	}
-	| t5 MULTI t6 
+	| t1 MULTI t1 
 	{
 		print_endline("t5_multi");
 		$1 ^ "*" ^ $3
 	}
-	| t5 DIV t6 
+	| t1 DIV t1 
 	{
 		print_endline("t5_div");
 		$1 ^ "/" ^ $3
 	}
-	| t6
-	{
-		print_endline("t6->t5");
-		$1
-	}
-	;
-
-t6
-	: t6 CROSS t7 
+	| t1 CROSS t1 
 	{
 		print_endline("t6_cross");
 		$1 ^ ".cross(" ^ $3 ^ ")"
 	}
-	| t7
-	{
-		print_endline("t7->t6");
-		$1
-	}
-	;
-
-t7
-	: MINUS t7
+	| MINUS t1 %prec UMINUS
 	{
 		print_endline("minus");
 		"-" ^ $2
 	}
-	| LOG_NOT t7
+	| LOG_NOT t1 %prec ULOG_NOT
 	{
 		"not " ^ $2
 	}
-	| t8
+    | t2 
+    {
+        $1
+    }
+    ;
+t2
+	: t8
 	{
 		$1
 	}
