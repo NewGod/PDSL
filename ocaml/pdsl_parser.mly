@@ -314,7 +314,8 @@ exp
 	: IDENT ASSIGN exp 
 	{
 		var_table := Stringmap.add $1 func_cnt.contents var_table.contents;
-		print_endline ($1 ^ ".set_val(" ^ assgin_value.contents ^ ")");
+		print_endline (curr_idtstr.contents ^ $1 ^ " = PhyVar(0, {}, True)");
+		print_endline (curr_idtstr.contents ^ $1 ^ ".set_val(" ^ assgin_value.contents ^ ")");
 		""
 	}
 	| t1
