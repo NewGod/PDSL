@@ -1,0 +1,2305 @@
+   0  $accept : %entry% $end
+
+   1  main : sentence_list
+
+   2  sentence_list :
+   3                | sentence_list sentence
+
+   4  sentence : class_def
+   5           | func_def
+   6           | single_sentence
+
+   7  class_def : basic_class_def maybe_name maybe_relation single_assign_list RCP
+
+   8  basic_class_def : CLASS IDENT LCP
+
+   9  maybe_name :
+  10             | NAME ASSIGN IDENT BOUNDARY
+
+  11  maybe_relation :
+  12                 | RELATION ASSIGN relation_exp BOUNDARY
+
+  13  relation_exp : relation_exp MULTI relation
+  14               | relation_exp DIV relation
+  15               | relation
+
+  16  relation : LP relation_exp RP
+  17           | relation POWER ct2
+  18           | IDENT
+
+  19  single_const_exp : ct1 PLUS single_const_exp
+  20                   | ct2 MINUS single_const_exp
+  21                   | ct1
+
+  22  ct1 : ct2 MULTI ct1
+  23      | ct2 DIV ct1
+  24      | ct2
+
+  25  ct2 : LP single_const_exp RP
+  26      | MINUS ct2
+  27      | NUM
+
+  28  single_assign_list :
+  29                     | single_assign_list single_assign BOUNDARY
+
+  30  single_assign : NUM IDENT ASSIGN NUM IDENT
+
+  31  func_def : basic_func_def code_block_return
+
+  32  basic_func_def : DEF IDENT LP para_list RP
+
+  33  para_list :
+  34            | non_empty_para_list
+
+  35  non_empty_para_list : non_empty_para_list COMMA para
+  36                      | para
+
+  37  para : IDENT
+
+  38  single_sentence : code_block
+  39                  | branch
+  40                  | recurr
+  41                  | exp BOUNDARY
+
+  42  code_block : lcp_addident sentence_list rcp_subident
+
+  43  code_block_return : lcp_addident sentence_list RETURN BOUNDARY rcp_subident
+
+  44  lcp_addident : LCP
+
+  45  rcp_subident : RCP
+
+  46  branch : basic_branch_if code_block basic_else code_block
+  47         | basic_branch_if code_block
+
+  48  basic_branch_if : IF LP t1 RP
+
+  49  basic_else : ELSE
+
+  50  recurr : basic_recurr code_block
+
+  51  basic_recurr : FOR IDENT IN interval
+
+  52  interval : LP t1 RP
+  53           | LP t1 COMMA t1 RP
+  54           | LP t1 COMMA t1 COMMA t1 RP
+
+  55  exp : IDENT ASSIGN exp
+  56      | t1
+
+  57  t1 : t1 LOG_AND t1
+  58     | t1 LOG_OR t1
+  59     | LOG_NOT t1
+  60     | t1 EQ t1
+  61     | t1 NEQ t1
+  62     | t1 GT t1
+  63     | t1 LE t1
+  64     | t1 GEQ t1
+  65     | t1 LEQ t1
+  66     | t2
+
+  67  t2 : t2 LMP relation_exp RMP
+  68     | t3
+
+  69  t3 : t3 PLUS t3
+  70     | t3 MINUS t3
+  71     | t3 MOD t3
+  72     | t3 MULTI t3
+  73     | t3 DIV t3
+  74     | t3 CROSS t3
+  75     | MINUS t3
+  76     | t4
+
+  77  t4 : t4 DOT IDENT
+  78     | t4 LP p_list RP
+  79     | LP t1 RP
+  80     | var
+
+  81  var : num_exp
+  82      | STRING
+  83      | IDENT
+
+  84  num_exp : NUM
+  85          | LMP num_list LMP
+
+  86  num_list : NUM
+  87           | num_list COMMA NUM
+
+  88  p_list :
+  89         | non_empty_p_list
+
+  90  non_empty_p_list : t1
+  91                   | non_empty_p_list COMMA t1
+
+  92  %entry% : '\001' main
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . main  (92)
+	sentence_list : .  (2)
+
+	.  reduce 2
+
+	main  goto 3
+	sentence_list  goto 4
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	%entry% : '\001' main .  (92)
+
+	.  reduce 92
+
+
+state 4
+	main : sentence_list .  (1)
+	sentence_list : sentence_list . sentence  (3)
+
+	NUM  shift 5
+	IDENT  shift 6
+	STRING  shift 7
+	CLASS  shift 8
+	DEF  shift 9
+	IF  shift 10
+	FOR  shift 11
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	LCP  shift 16
+	$end  reduce 1
+
+	sentence  goto 17
+	class_def  goto 18
+	func_def  goto 19
+	single_sentence  goto 20
+	basic_class_def  goto 21
+	basic_func_def  goto 22
+	code_block  goto 23
+	branch  goto 24
+	recurr  goto 25
+	exp  goto 26
+	lcp_addident  goto 27
+	basic_branch_if  goto 28
+	t1  goto 29
+	basic_recurr  goto 30
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 5
+	num_exp : NUM .  (84)
+
+	.  reduce 84
+
+
+state 6
+	exp : IDENT . ASSIGN exp  (55)
+	var : IDENT .  (83)
+
+	ASSIGN  shift 36
+	LOG_AND  reduce 83
+	LOG_OR  reduce 83
+	CROSS  reduce 83
+	DOT  reduce 83
+	PLUS  reduce 83
+	MINUS  reduce 83
+	MULTI  reduce 83
+	DIV  reduce 83
+	MOD  reduce 83
+	LP  reduce 83
+	LMP  reduce 83
+	BOUNDARY  reduce 83
+	EQ  reduce 83
+	GEQ  reduce 83
+	LEQ  reduce 83
+	GT  reduce 83
+	LE  reduce 83
+	NEQ  reduce 83
+
+
+state 7
+	var : STRING .  (82)
+
+	.  reduce 82
+
+
+state 8
+	basic_class_def : CLASS . IDENT LCP  (8)
+
+	IDENT  shift 37
+	.  error
+
+
+state 9
+	basic_func_def : DEF . IDENT LP para_list RP  (32)
+
+	IDENT  shift 38
+	.  error
+
+
+state 10
+	basic_branch_if : IF . LP t1 RP  (48)
+
+	LP  shift 39
+	.  error
+
+
+state 11
+	basic_recurr : FOR . IDENT IN interval  (51)
+
+	IDENT  shift 40
+	.  error
+
+
+state 12
+	t1 : LOG_NOT . t1  (59)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 42
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 13
+	t3 : MINUS . t3  (75)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t3  goto 43
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 14
+	t4 : LP . t1 RP  (79)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 44
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 15
+	num_exp : LMP . num_list LMP  (85)
+
+	NUM  shift 45
+	.  error
+
+	num_list  goto 46
+
+
+state 16
+	lcp_addident : LCP .  (44)
+
+	.  reduce 44
+
+
+state 17
+	sentence_list : sentence_list sentence .  (3)
+
+	.  reduce 3
+
+
+state 18
+	sentence : class_def .  (4)
+
+	.  reduce 4
+
+
+state 19
+	sentence : func_def .  (5)
+
+	.  reduce 5
+
+
+state 20
+	sentence : single_sentence .  (6)
+
+	.  reduce 6
+
+
+state 21
+	class_def : basic_class_def . maybe_name maybe_relation single_assign_list RCP  (7)
+	maybe_name : .  (9)
+
+	NAME  shift 47
+	NUM  reduce 9
+	RELATION  reduce 9
+	RCP  reduce 9
+
+	maybe_name  goto 48
+
+
+state 22
+	func_def : basic_func_def . code_block_return  (31)
+
+	LCP  shift 16
+	.  error
+
+	code_block_return  goto 49
+	lcp_addident  goto 50
+
+
+state 23
+	single_sentence : code_block .  (38)
+
+	.  reduce 38
+
+
+state 24
+	single_sentence : branch .  (39)
+
+	.  reduce 39
+
+
+state 25
+	single_sentence : recurr .  (40)
+
+	.  reduce 40
+
+
+state 26
+	single_sentence : exp . BOUNDARY  (41)
+
+	BOUNDARY  shift 51
+	.  error
+
+
+state 27
+	code_block : lcp_addident . sentence_list rcp_subident  (42)
+	sentence_list : .  (2)
+
+	.  reduce 2
+
+	sentence_list  goto 52
+
+
+state 28
+	branch : basic_branch_if . code_block basic_else code_block  (46)
+	branch : basic_branch_if . code_block  (47)
+
+	LCP  shift 16
+	.  error
+
+	code_block  goto 53
+	lcp_addident  goto 27
+
+
+state 29
+	exp : t1 .  (56)
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	LOG_AND  shift 54
+	LOG_OR  shift 55
+	EQ  shift 56
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	NEQ  shift 61
+	BOUNDARY  reduce 56
+
+
+state 30
+	recurr : basic_recurr . code_block  (50)
+
+	LCP  shift 16
+	.  error
+
+	code_block  goto 62
+	lcp_addident  goto 27
+
+
+state 31
+	t1 : t2 .  (66)
+	t2 : t2 . LMP relation_exp RMP  (67)
+
+	LMP  shift 63
+	LOG_AND  reduce 66
+	LOG_OR  reduce 66
+	COMMA  reduce 66
+	RP  reduce 66
+	BOUNDARY  reduce 66
+	EQ  reduce 66
+	GEQ  reduce 66
+	LEQ  reduce 66
+	GT  reduce 66
+	LE  reduce 66
+	NEQ  reduce 66
+
+
+state 32
+	t2 : t3 .  (68)
+	t3 : t3 . PLUS t3  (69)
+	t3 : t3 . MINUS t3  (70)
+	t3 : t3 . MOD t3  (71)
+	t3 : t3 . MULTI t3  (72)
+	t3 : t3 . DIV t3  (73)
+	t3 : t3 . CROSS t3  (74)
+
+	CROSS  shift 64
+	PLUS  shift 65
+	MINUS  shift 66
+	MULTI  shift 67
+	DIV  shift 68
+	MOD  shift 69
+	LOG_AND  reduce 68
+	LOG_OR  reduce 68
+	COMMA  reduce 68
+	RP  reduce 68
+	LMP  reduce 68
+	BOUNDARY  reduce 68
+	EQ  reduce 68
+	GEQ  reduce 68
+	LEQ  reduce 68
+	GT  reduce 68
+	LE  reduce 68
+	NEQ  reduce 68
+
+
+state 33
+	t3 : t4 .  (76)
+	t4 : t4 . DOT IDENT  (77)
+	t4 : t4 . LP p_list RP  (78)
+
+	DOT  shift 70
+	LP  shift 71
+	LOG_AND  reduce 76
+	LOG_OR  reduce 76
+	CROSS  reduce 76
+	COMMA  reduce 76
+	PLUS  reduce 76
+	MINUS  reduce 76
+	MULTI  reduce 76
+	DIV  reduce 76
+	MOD  reduce 76
+	RP  reduce 76
+	LMP  reduce 76
+	BOUNDARY  reduce 76
+	EQ  reduce 76
+	GEQ  reduce 76
+	LEQ  reduce 76
+	GT  reduce 76
+	LE  reduce 76
+	NEQ  reduce 76
+
+
+state 34
+	t4 : var .  (80)
+
+	.  reduce 80
+
+
+state 35
+	var : num_exp .  (81)
+
+	.  reduce 81
+
+
+state 36
+	exp : IDENT ASSIGN . exp  (55)
+
+	NUM  shift 5
+	IDENT  shift 6
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	exp  goto 72
+	t1  goto 29
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 37
+	basic_class_def : CLASS IDENT . LCP  (8)
+
+	LCP  shift 73
+	.  error
+
+
+state 38
+	basic_func_def : DEF IDENT . LP para_list RP  (32)
+
+	LP  shift 74
+	.  error
+
+
+state 39
+	basic_branch_if : IF LP . t1 RP  (48)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 75
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 40
+	basic_recurr : FOR IDENT . IN interval  (51)
+
+	IN  shift 76
+	.  error
+
+
+state 41
+	var : IDENT .  (83)
+
+	.  reduce 83
+
+
+state 42
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : LOG_NOT t1 .  (59)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	EQ  shift 56
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	NEQ  shift 61
+	LOG_AND  reduce 59
+	LOG_OR  reduce 59
+	COMMA  reduce 59
+	RP  reduce 59
+	BOUNDARY  reduce 59
+
+
+state 43
+	t3 : t3 . PLUS t3  (69)
+	t3 : t3 . MINUS t3  (70)
+	t3 : t3 . MOD t3  (71)
+	t3 : t3 . MULTI t3  (72)
+	t3 : t3 . DIV t3  (73)
+	t3 : t3 . CROSS t3  (74)
+	t3 : MINUS t3 .  (75)
+
+	.  reduce 75
+
+
+state 44
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+	t4 : LP t1 . RP  (79)
+
+	LOG_AND  shift 54
+	LOG_OR  shift 55
+	RP  shift 77
+	EQ  shift 56
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	NEQ  shift 61
+	.  error
+
+
+state 45
+	num_list : NUM .  (86)
+
+	.  reduce 86
+
+
+state 46
+	num_exp : LMP num_list . LMP  (85)
+	num_list : num_list . COMMA NUM  (87)
+
+	COMMA  shift 78
+	LMP  shift 79
+	.  error
+
+
+state 47
+	maybe_name : NAME . ASSIGN IDENT BOUNDARY  (10)
+
+	ASSIGN  shift 80
+	.  error
+
+
+state 48
+	class_def : basic_class_def maybe_name . maybe_relation single_assign_list RCP  (7)
+	maybe_relation : .  (11)
+
+	RELATION  shift 81
+	NUM  reduce 11
+	RCP  reduce 11
+
+	maybe_relation  goto 82
+
+
+state 49
+	func_def : basic_func_def code_block_return .  (31)
+
+	.  reduce 31
+
+
+state 50
+	code_block_return : lcp_addident . sentence_list RETURN BOUNDARY rcp_subident  (43)
+	sentence_list : .  (2)
+
+	.  reduce 2
+
+	sentence_list  goto 83
+
+
+state 51
+	single_sentence : exp BOUNDARY .  (41)
+
+	.  reduce 41
+
+
+state 52
+	sentence_list : sentence_list . sentence  (3)
+	code_block : lcp_addident sentence_list . rcp_subident  (42)
+
+	NUM  shift 5
+	IDENT  shift 6
+	STRING  shift 7
+	CLASS  shift 8
+	DEF  shift 9
+	IF  shift 10
+	FOR  shift 11
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	LCP  shift 16
+	RCP  shift 84
+	.  error
+
+	sentence  goto 17
+	class_def  goto 18
+	func_def  goto 19
+	single_sentence  goto 20
+	basic_class_def  goto 21
+	basic_func_def  goto 22
+	code_block  goto 23
+	branch  goto 24
+	recurr  goto 25
+	exp  goto 26
+	lcp_addident  goto 27
+	rcp_subident  goto 85
+	basic_branch_if  goto 28
+	t1  goto 29
+	basic_recurr  goto 30
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 53
+	branch : basic_branch_if code_block . basic_else code_block  (46)
+	branch : basic_branch_if code_block .  (47)
+
+	ELSE  shift 86
+	$end  reduce 47
+	NUM  reduce 47
+	IDENT  reduce 47
+	STRING  reduce 47
+	CLASS  reduce 47
+	DEF  reduce 47
+	RETURN  reduce 47
+	IF  reduce 47
+	FOR  reduce 47
+	LOG_NOT  reduce 47
+	MINUS  reduce 47
+	LP  reduce 47
+	LMP  reduce 47
+	LCP  reduce 47
+	RCP  reduce 47
+
+	basic_else  goto 87
+
+
+state 54
+	t1 : t1 LOG_AND . t1  (57)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 88
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 55
+	t1 : t1 LOG_OR . t1  (58)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 89
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 56
+	t1 : t1 EQ . t1  (60)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 90
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 57
+	t1 : t1 GEQ . t1  (64)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 91
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 58
+	t1 : t1 LEQ . t1  (65)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 92
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 59
+	t1 : t1 GT . t1  (62)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 93
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 60
+	t1 : t1 LE . t1  (63)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 94
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 61
+	t1 : t1 NEQ . t1  (61)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 95
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 62
+	recurr : basic_recurr code_block .  (50)
+
+	.  reduce 50
+
+
+state 63
+	t2 : t2 LMP . relation_exp RMP  (67)
+
+	IDENT  shift 96
+	LP  shift 97
+	.  error
+
+	relation_exp  goto 98
+	relation  goto 99
+
+
+state 64
+	t3 : t3 CROSS . t3  (74)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t3  goto 100
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 65
+	t3 : t3 PLUS . t3  (69)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t3  goto 101
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 66
+	t3 : t3 MINUS . t3  (70)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t3  goto 102
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 67
+	t3 : t3 MULTI . t3  (72)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t3  goto 103
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 68
+	t3 : t3 DIV . t3  (73)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t3  goto 104
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 69
+	t3 : t3 MOD . t3  (71)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t3  goto 105
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 70
+	t4 : t4 DOT . IDENT  (77)
+
+	IDENT  shift 106
+	.  error
+
+
+state 71
+	t4 : t4 LP . p_list RP  (78)
+	p_list : .  (88)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	RP  reduce 88
+
+	t1  goto 107
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	p_list  goto 108
+	var  goto 34
+	num_exp  goto 35
+	non_empty_p_list  goto 109
+
+
+state 72
+	exp : IDENT ASSIGN exp .  (55)
+
+	.  reduce 55
+
+
+state 73
+	basic_class_def : CLASS IDENT LCP .  (8)
+
+	.  reduce 8
+
+
+state 74
+	basic_func_def : DEF IDENT LP . para_list RP  (32)
+	para_list : .  (33)
+
+	IDENT  shift 110
+	RP  reduce 33
+
+	para_list  goto 111
+	non_empty_para_list  goto 112
+	para  goto 113
+
+
+state 75
+	basic_branch_if : IF LP t1 . RP  (48)
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	LOG_AND  shift 54
+	LOG_OR  shift 55
+	RP  shift 114
+	EQ  shift 56
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	NEQ  shift 61
+	.  error
+
+
+state 76
+	basic_recurr : FOR IDENT IN . interval  (51)
+
+	LP  shift 115
+	.  error
+
+	interval  goto 116
+
+
+state 77
+	t4 : LP t1 RP .  (79)
+
+	.  reduce 79
+
+
+state 78
+	num_list : num_list COMMA . NUM  (87)
+
+	NUM  shift 117
+	.  error
+
+
+state 79
+	num_exp : LMP num_list LMP .  (85)
+
+	.  reduce 85
+
+
+state 80
+	maybe_name : NAME ASSIGN . IDENT BOUNDARY  (10)
+
+	IDENT  shift 118
+	.  error
+
+
+state 81
+	maybe_relation : RELATION . ASSIGN relation_exp BOUNDARY  (12)
+
+	ASSIGN  shift 119
+	.  error
+
+
+state 82
+	class_def : basic_class_def maybe_name maybe_relation . single_assign_list RCP  (7)
+	single_assign_list : .  (28)
+
+	.  reduce 28
+
+	single_assign_list  goto 120
+
+
+state 83
+	sentence_list : sentence_list . sentence  (3)
+	code_block_return : lcp_addident sentence_list . RETURN BOUNDARY rcp_subident  (43)
+
+	NUM  shift 5
+	IDENT  shift 6
+	STRING  shift 7
+	CLASS  shift 8
+	DEF  shift 9
+	RETURN  shift 121
+	IF  shift 10
+	FOR  shift 11
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	LCP  shift 16
+	.  error
+
+	sentence  goto 17
+	class_def  goto 18
+	func_def  goto 19
+	single_sentence  goto 20
+	basic_class_def  goto 21
+	basic_func_def  goto 22
+	code_block  goto 23
+	branch  goto 24
+	recurr  goto 25
+	exp  goto 26
+	lcp_addident  goto 27
+	basic_branch_if  goto 28
+	t1  goto 29
+	basic_recurr  goto 30
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 84
+	rcp_subident : RCP .  (45)
+
+	.  reduce 45
+
+
+state 85
+	code_block : lcp_addident sentence_list rcp_subident .  (42)
+
+	.  reduce 42
+
+
+state 86
+	basic_else : ELSE .  (49)
+
+	.  reduce 49
+
+
+state 87
+	branch : basic_branch_if code_block basic_else . code_block  (46)
+
+	LCP  shift 16
+	.  error
+
+	code_block  goto 122
+	lcp_addident  goto 27
+
+
+state 88
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 LOG_AND t1 .  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	LOG_OR  shift 55
+	EQ  shift 56
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	NEQ  shift 61
+	LOG_AND  reduce 57
+	COMMA  reduce 57
+	RP  reduce 57
+	BOUNDARY  reduce 57
+
+
+state 89
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 LOG_OR t1 .  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	EQ  shift 56
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	NEQ  shift 61
+	LOG_AND  reduce 58
+	LOG_OR  reduce 58
+	COMMA  reduce 58
+	RP  reduce 58
+	BOUNDARY  reduce 58
+
+
+state 90
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 EQ t1 .  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	LOG_AND  reduce 60
+	LOG_OR  reduce 60
+	COMMA  reduce 60
+	RP  reduce 60
+	BOUNDARY  reduce 60
+
+
+state 91
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 GEQ t1 .  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	.  reduce 64
+
+
+state 92
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+	t1 : t1 LEQ t1 .  (65)
+
+	.  reduce 65
+
+
+state 93
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 GT t1 .  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	.  reduce 62
+
+
+state 94
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 LE t1 .  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	.  reduce 63
+
+
+state 95
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 NEQ t1 .  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	LOG_AND  reduce 61
+	LOG_OR  reduce 61
+	COMMA  reduce 61
+	RP  reduce 61
+	BOUNDARY  reduce 61
+
+
+state 96
+	relation : IDENT .  (18)
+
+	.  reduce 18
+
+
+state 97
+	relation : LP . relation_exp RP  (16)
+
+	IDENT  shift 96
+	LP  shift 97
+	.  error
+
+	relation_exp  goto 123
+	relation  goto 99
+
+
+state 98
+	relation_exp : relation_exp . MULTI relation  (13)
+	relation_exp : relation_exp . DIV relation  (14)
+	t2 : t2 LMP relation_exp . RMP  (67)
+
+	MULTI  shift 124
+	DIV  shift 125
+	RMP  shift 126
+	.  error
+
+
+state 99
+	relation_exp : relation .  (15)
+	relation : relation . POWER ct2  (17)
+
+	POWER  shift 127
+	MULTI  reduce 15
+	DIV  reduce 15
+	RP  reduce 15
+	RMP  reduce 15
+	BOUNDARY  reduce 15
+
+
+state 100
+	t3 : t3 . PLUS t3  (69)
+	t3 : t3 . MINUS t3  (70)
+	t3 : t3 . MOD t3  (71)
+	t3 : t3 . MULTI t3  (72)
+	t3 : t3 . DIV t3  (73)
+	t3 : t3 . CROSS t3  (74)
+	t3 : t3 CROSS t3 .  (74)
+
+	.  reduce 74
+
+
+state 101
+	t3 : t3 . PLUS t3  (69)
+	t3 : t3 PLUS t3 .  (69)
+	t3 : t3 . MINUS t3  (70)
+	t3 : t3 . MOD t3  (71)
+	t3 : t3 . MULTI t3  (72)
+	t3 : t3 . DIV t3  (73)
+	t3 : t3 . CROSS t3  (74)
+
+	CROSS  shift 64
+	MULTI  shift 67
+	DIV  shift 68
+	MOD  shift 69
+	LOG_AND  reduce 69
+	LOG_OR  reduce 69
+	COMMA  reduce 69
+	PLUS  reduce 69
+	MINUS  reduce 69
+	RP  reduce 69
+	LMP  reduce 69
+	BOUNDARY  reduce 69
+	EQ  reduce 69
+	GEQ  reduce 69
+	LEQ  reduce 69
+	GT  reduce 69
+	LE  reduce 69
+	NEQ  reduce 69
+
+
+state 102
+	t3 : t3 . PLUS t3  (69)
+	t3 : t3 . MINUS t3  (70)
+	t3 : t3 MINUS t3 .  (70)
+	t3 : t3 . MOD t3  (71)
+	t3 : t3 . MULTI t3  (72)
+	t3 : t3 . DIV t3  (73)
+	t3 : t3 . CROSS t3  (74)
+
+	CROSS  shift 64
+	MULTI  shift 67
+	DIV  shift 68
+	MOD  shift 69
+	LOG_AND  reduce 70
+	LOG_OR  reduce 70
+	COMMA  reduce 70
+	PLUS  reduce 70
+	MINUS  reduce 70
+	RP  reduce 70
+	LMP  reduce 70
+	BOUNDARY  reduce 70
+	EQ  reduce 70
+	GEQ  reduce 70
+	LEQ  reduce 70
+	GT  reduce 70
+	LE  reduce 70
+	NEQ  reduce 70
+
+
+state 103
+	t3 : t3 . PLUS t3  (69)
+	t3 : t3 . MINUS t3  (70)
+	t3 : t3 . MOD t3  (71)
+	t3 : t3 . MULTI t3  (72)
+	t3 : t3 MULTI t3 .  (72)
+	t3 : t3 . DIV t3  (73)
+	t3 : t3 . CROSS t3  (74)
+
+	CROSS  shift 64
+	LOG_AND  reduce 72
+	LOG_OR  reduce 72
+	COMMA  reduce 72
+	PLUS  reduce 72
+	MINUS  reduce 72
+	MULTI  reduce 72
+	DIV  reduce 72
+	MOD  reduce 72
+	RP  reduce 72
+	LMP  reduce 72
+	BOUNDARY  reduce 72
+	EQ  reduce 72
+	GEQ  reduce 72
+	LEQ  reduce 72
+	GT  reduce 72
+	LE  reduce 72
+	NEQ  reduce 72
+
+
+state 104
+	t3 : t3 . PLUS t3  (69)
+	t3 : t3 . MINUS t3  (70)
+	t3 : t3 . MOD t3  (71)
+	t3 : t3 . MULTI t3  (72)
+	t3 : t3 . DIV t3  (73)
+	t3 : t3 DIV t3 .  (73)
+	t3 : t3 . CROSS t3  (74)
+
+	CROSS  shift 64
+	LOG_AND  reduce 73
+	LOG_OR  reduce 73
+	COMMA  reduce 73
+	PLUS  reduce 73
+	MINUS  reduce 73
+	MULTI  reduce 73
+	DIV  reduce 73
+	MOD  reduce 73
+	RP  reduce 73
+	LMP  reduce 73
+	BOUNDARY  reduce 73
+	EQ  reduce 73
+	GEQ  reduce 73
+	LEQ  reduce 73
+	GT  reduce 73
+	LE  reduce 73
+	NEQ  reduce 73
+
+
+state 105
+	t3 : t3 . PLUS t3  (69)
+	t3 : t3 . MINUS t3  (70)
+	t3 : t3 . MOD t3  (71)
+	t3 : t3 MOD t3 .  (71)
+	t3 : t3 . MULTI t3  (72)
+	t3 : t3 . DIV t3  (73)
+	t3 : t3 . CROSS t3  (74)
+
+	CROSS  shift 64
+	LOG_AND  reduce 71
+	LOG_OR  reduce 71
+	COMMA  reduce 71
+	PLUS  reduce 71
+	MINUS  reduce 71
+	MULTI  reduce 71
+	DIV  reduce 71
+	MOD  reduce 71
+	RP  reduce 71
+	LMP  reduce 71
+	BOUNDARY  reduce 71
+	EQ  reduce 71
+	GEQ  reduce 71
+	LEQ  reduce 71
+	GT  reduce 71
+	LE  reduce 71
+	NEQ  reduce 71
+
+
+state 106
+	t4 : t4 DOT IDENT .  (77)
+
+	.  reduce 77
+
+
+state 107
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+	non_empty_p_list : t1 .  (90)
+
+	LOG_AND  shift 54
+	LOG_OR  shift 55
+	EQ  shift 56
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	NEQ  shift 61
+	COMMA  reduce 90
+	RP  reduce 90
+
+
+state 108
+	t4 : t4 LP p_list . RP  (78)
+
+	RP  shift 128
+	.  error
+
+
+state 109
+	p_list : non_empty_p_list .  (89)
+	non_empty_p_list : non_empty_p_list . COMMA t1  (91)
+
+	COMMA  shift 129
+	RP  reduce 89
+
+
+state 110
+	para : IDENT .  (37)
+
+	.  reduce 37
+
+
+state 111
+	basic_func_def : DEF IDENT LP para_list . RP  (32)
+
+	RP  shift 130
+	.  error
+
+
+state 112
+	para_list : non_empty_para_list .  (34)
+	non_empty_para_list : non_empty_para_list . COMMA para  (35)
+
+	COMMA  shift 131
+	RP  reduce 34
+
+
+state 113
+	non_empty_para_list : para .  (36)
+
+	.  reduce 36
+
+
+state 114
+	basic_branch_if : IF LP t1 RP .  (48)
+
+	.  reduce 48
+
+
+state 115
+	interval : LP . t1 RP  (52)
+	interval : LP . t1 COMMA t1 RP  (53)
+	interval : LP . t1 COMMA t1 COMMA t1 RP  (54)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 132
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 116
+	basic_recurr : FOR IDENT IN interval .  (51)
+
+	.  reduce 51
+
+
+state 117
+	num_list : num_list COMMA NUM .  (87)
+
+	.  reduce 87
+
+
+state 118
+	maybe_name : NAME ASSIGN IDENT . BOUNDARY  (10)
+
+	BOUNDARY  shift 133
+	.  error
+
+
+state 119
+	maybe_relation : RELATION ASSIGN . relation_exp BOUNDARY  (12)
+
+	IDENT  shift 96
+	LP  shift 97
+	.  error
+
+	relation_exp  goto 134
+	relation  goto 99
+
+
+state 120
+	class_def : basic_class_def maybe_name maybe_relation single_assign_list . RCP  (7)
+	single_assign_list : single_assign_list . single_assign BOUNDARY  (29)
+
+	NUM  shift 135
+	RCP  shift 136
+	.  error
+
+	single_assign  goto 137
+
+
+state 121
+	code_block_return : lcp_addident sentence_list RETURN . BOUNDARY rcp_subident  (43)
+
+	BOUNDARY  shift 138
+	.  error
+
+
+state 122
+	branch : basic_branch_if code_block basic_else code_block .  (46)
+
+	.  reduce 46
+
+
+state 123
+	relation_exp : relation_exp . MULTI relation  (13)
+	relation_exp : relation_exp . DIV relation  (14)
+	relation : LP relation_exp . RP  (16)
+
+	MULTI  shift 124
+	DIV  shift 125
+	RP  shift 139
+	.  error
+
+
+state 124
+	relation_exp : relation_exp MULTI . relation  (13)
+
+	IDENT  shift 96
+	LP  shift 97
+	.  error
+
+	relation  goto 140
+
+
+state 125
+	relation_exp : relation_exp DIV . relation  (14)
+
+	IDENT  shift 96
+	LP  shift 97
+	.  error
+
+	relation  goto 141
+
+
+state 126
+	t2 : t2 LMP relation_exp RMP .  (67)
+
+	.  reduce 67
+
+
+state 127
+	relation : relation POWER . ct2  (17)
+
+	NUM  shift 142
+	MINUS  shift 143
+	LP  shift 144
+	.  error
+
+	ct2  goto 145
+
+
+state 128
+	t4 : t4 LP p_list RP .  (78)
+
+	.  reduce 78
+
+
+state 129
+	non_empty_p_list : non_empty_p_list COMMA . t1  (91)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 146
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 130
+	basic_func_def : DEF IDENT LP para_list RP .  (32)
+
+	.  reduce 32
+
+
+state 131
+	non_empty_para_list : non_empty_para_list COMMA . para  (35)
+
+	IDENT  shift 110
+	.  error
+
+	para  goto 147
+
+
+state 132
+	interval : LP t1 . RP  (52)
+	interval : LP t1 . COMMA t1 RP  (53)
+	interval : LP t1 . COMMA t1 COMMA t1 RP  (54)
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	LOG_AND  shift 54
+	LOG_OR  shift 55
+	COMMA  shift 148
+	RP  shift 149
+	EQ  shift 56
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	NEQ  shift 61
+	.  error
+
+
+state 133
+	maybe_name : NAME ASSIGN IDENT BOUNDARY .  (10)
+
+	.  reduce 10
+
+
+state 134
+	maybe_relation : RELATION ASSIGN relation_exp . BOUNDARY  (12)
+	relation_exp : relation_exp . MULTI relation  (13)
+	relation_exp : relation_exp . DIV relation  (14)
+
+	MULTI  shift 124
+	DIV  shift 125
+	BOUNDARY  shift 150
+	.  error
+
+
+state 135
+	single_assign : NUM . IDENT ASSIGN NUM IDENT  (30)
+
+	IDENT  shift 151
+	.  error
+
+
+state 136
+	class_def : basic_class_def maybe_name maybe_relation single_assign_list RCP .  (7)
+
+	.  reduce 7
+
+
+state 137
+	single_assign_list : single_assign_list single_assign . BOUNDARY  (29)
+
+	BOUNDARY  shift 152
+	.  error
+
+
+state 138
+	code_block_return : lcp_addident sentence_list RETURN BOUNDARY . rcp_subident  (43)
+
+	RCP  shift 84
+	.  error
+
+	rcp_subident  goto 153
+
+
+state 139
+	relation : LP relation_exp RP .  (16)
+
+	.  reduce 16
+
+
+state 140
+	relation_exp : relation_exp MULTI relation .  (13)
+	relation : relation . POWER ct2  (17)
+
+	POWER  shift 127
+	MULTI  reduce 13
+	DIV  reduce 13
+	RP  reduce 13
+	RMP  reduce 13
+	BOUNDARY  reduce 13
+
+
+state 141
+	relation_exp : relation_exp DIV relation .  (14)
+	relation : relation . POWER ct2  (17)
+
+	POWER  shift 127
+	MULTI  reduce 14
+	DIV  reduce 14
+	RP  reduce 14
+	RMP  reduce 14
+	BOUNDARY  reduce 14
+
+
+state 142
+	ct2 : NUM .  (27)
+
+	.  reduce 27
+
+
+state 143
+	ct2 : MINUS . ct2  (26)
+
+	NUM  shift 142
+	MINUS  shift 143
+	LP  shift 144
+	.  error
+
+	ct2  goto 154
+
+
+state 144
+	ct2 : LP . single_const_exp RP  (25)
+
+	NUM  shift 142
+	MINUS  shift 143
+	LP  shift 144
+	.  error
+
+	ct2  goto 155
+	single_const_exp  goto 156
+	ct1  goto 157
+
+
+state 145
+	relation : relation POWER ct2 .  (17)
+
+	.  reduce 17
+
+
+state 146
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+	non_empty_p_list : non_empty_p_list COMMA t1 .  (91)
+
+	LOG_AND  shift 54
+	LOG_OR  shift 55
+	EQ  shift 56
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	NEQ  shift 61
+	COMMA  reduce 91
+	RP  reduce 91
+
+
+state 147
+	non_empty_para_list : non_empty_para_list COMMA para .  (35)
+
+	.  reduce 35
+
+
+state 148
+	interval : LP t1 COMMA . t1 RP  (53)
+	interval : LP t1 COMMA . t1 COMMA t1 RP  (54)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 158
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 149
+	interval : LP t1 RP .  (52)
+
+	.  reduce 52
+
+
+state 150
+	maybe_relation : RELATION ASSIGN relation_exp BOUNDARY .  (12)
+
+	.  reduce 12
+
+
+state 151
+	single_assign : NUM IDENT . ASSIGN NUM IDENT  (30)
+
+	ASSIGN  shift 159
+	.  error
+
+
+state 152
+	single_assign_list : single_assign_list single_assign BOUNDARY .  (29)
+
+	.  reduce 29
+
+
+state 153
+	code_block_return : lcp_addident sentence_list RETURN BOUNDARY rcp_subident .  (43)
+
+	.  reduce 43
+
+
+state 154
+	ct2 : MINUS ct2 .  (26)
+
+	.  reduce 26
+
+
+state 155
+	single_const_exp : ct2 . MINUS single_const_exp  (20)
+	ct1 : ct2 . MULTI ct1  (22)
+	ct1 : ct2 . DIV ct1  (23)
+	ct1 : ct2 .  (24)
+
+	MINUS  shift 160
+	MULTI  shift 161
+	DIV  shift 162
+	PLUS  reduce 24
+	RP  reduce 24
+
+
+state 156
+	ct2 : LP single_const_exp . RP  (25)
+
+	RP  shift 163
+	.  error
+
+
+state 157
+	single_const_exp : ct1 . PLUS single_const_exp  (19)
+	single_const_exp : ct1 .  (21)
+
+	PLUS  shift 164
+	RP  reduce 21
+
+
+state 158
+	interval : LP t1 COMMA t1 . RP  (53)
+	interval : LP t1 COMMA t1 . COMMA t1 RP  (54)
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	LOG_AND  shift 54
+	LOG_OR  shift 55
+	COMMA  shift 165
+	RP  shift 166
+	EQ  shift 56
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	NEQ  shift 61
+	.  error
+
+
+state 159
+	single_assign : NUM IDENT ASSIGN . NUM IDENT  (30)
+
+	NUM  shift 167
+	.  error
+
+
+state 160
+	single_const_exp : ct2 MINUS . single_const_exp  (20)
+
+	NUM  shift 142
+	MINUS  shift 143
+	LP  shift 144
+	.  error
+
+	ct2  goto 155
+	single_const_exp  goto 168
+	ct1  goto 157
+
+
+state 161
+	ct1 : ct2 MULTI . ct1  (22)
+
+	NUM  shift 142
+	MINUS  shift 143
+	LP  shift 144
+	.  error
+
+	ct2  goto 169
+	ct1  goto 170
+
+
+state 162
+	ct1 : ct2 DIV . ct1  (23)
+
+	NUM  shift 142
+	MINUS  shift 143
+	LP  shift 144
+	.  error
+
+	ct2  goto 169
+	ct1  goto 171
+
+
+state 163
+	ct2 : LP single_const_exp RP .  (25)
+
+	.  reduce 25
+
+
+state 164
+	single_const_exp : ct1 PLUS . single_const_exp  (19)
+
+	NUM  shift 142
+	MINUS  shift 143
+	LP  shift 144
+	.  error
+
+	ct2  goto 155
+	single_const_exp  goto 172
+	ct1  goto 157
+
+
+state 165
+	interval : LP t1 COMMA t1 COMMA . t1 RP  (54)
+
+	NUM  shift 5
+	IDENT  shift 41
+	STRING  shift 7
+	LOG_NOT  shift 12
+	MINUS  shift 13
+	LP  shift 14
+	LMP  shift 15
+	.  error
+
+	t1  goto 173
+	t2  goto 31
+	t3  goto 32
+	t4  goto 33
+	var  goto 34
+	num_exp  goto 35
+
+
+state 166
+	interval : LP t1 COMMA t1 RP .  (53)
+
+	.  reduce 53
+
+
+state 167
+	single_assign : NUM IDENT ASSIGN NUM . IDENT  (30)
+
+	IDENT  shift 174
+	.  error
+
+
+state 168
+	single_const_exp : ct2 MINUS single_const_exp .  (20)
+
+	.  reduce 20
+
+
+state 169
+	ct1 : ct2 . MULTI ct1  (22)
+	ct1 : ct2 . DIV ct1  (23)
+	ct1 : ct2 .  (24)
+
+	MULTI  shift 161
+	DIV  shift 162
+	PLUS  reduce 24
+	RP  reduce 24
+
+
+state 170
+	ct1 : ct2 MULTI ct1 .  (22)
+
+	.  reduce 22
+
+
+state 171
+	ct1 : ct2 DIV ct1 .  (23)
+
+	.  reduce 23
+
+
+state 172
+	single_const_exp : ct1 PLUS single_const_exp .  (19)
+
+	.  reduce 19
+
+
+state 173
+	interval : LP t1 COMMA t1 COMMA t1 . RP  (54)
+	t1 : t1 . LOG_AND t1  (57)
+	t1 : t1 . LOG_OR t1  (58)
+	t1 : t1 . EQ t1  (60)
+	t1 : t1 . NEQ t1  (61)
+	t1 : t1 . GT t1  (62)
+	t1 : t1 . LE t1  (63)
+	t1 : t1 . GEQ t1  (64)
+	t1 : t1 . LEQ t1  (65)
+
+	LOG_AND  shift 54
+	LOG_OR  shift 55
+	RP  shift 175
+	EQ  shift 56
+	GEQ  shift 57
+	LEQ  shift 58
+	GT  shift 59
+	LE  shift 60
+	NEQ  shift 61
+	.  error
+
+
+state 174
+	single_assign : NUM IDENT ASSIGN NUM IDENT .  (30)
+
+	.  reduce 30
+
+
+state 175
+	interval : LP t1 COMMA t1 COMMA t1 RP .  (54)
+
+	.  reduce 54
+
+
+56 terminals, 42 nonterminals
+93 grammar rules, 176 states

@@ -3,6 +3,7 @@ let indent_cnt = ref 0;;
 let curr_idtstr = ref "";;
 let func_cnt = ref 0;;
 let curr_name = ref "";;
+let assgin_value = ref "";;
 module Stringmap = Map.Make(String);;
 let var_table = ref Stringmap.empty;;
 let class_table = ref Stringmap.empty;;
@@ -46,7 +47,8 @@ open String
         %left PLUS MINUS        /* lowest precedence */
         %left MOD MULTI DIV         /* medium precedence */
         %left CROSS
-        %left DOT UFUNC
+        %left UFUNC
+        %left DOT
         %nonassoc UMINUS 
         %start main             /* the entry point */
         %type <int> main
@@ -129,7 +131,7 @@ relation:
 	{
 		$2
 	}
-	| relation POWER single_const_exp
+	| relation POWER ct2
 	{
 		Stringmap.map (mult $3) $1
 	}
@@ -179,7 +181,7 @@ single_assign
 func_def
 	: 
 	basic_func_def
-	code_block
+	code_block_return
 	{}
 	;
 
@@ -312,10 +314,12 @@ exp
 	: IDENT ASSIGN exp 
 	{
 		var_table := Stringmap.add $1 func_cnt.contents var_table.contents;
-		$1 ^ " = " ^ $3
+		print_endline ($1 ^ ".set_val(" ^ assgin_value.contents ^ ")");
+		""
 	}
 	| t1
 	{
+		assgin_value := $1;
 		$1
 	}
 	;
@@ -357,7 +361,14 @@ t1
 	{
 		$1 ^ "<=" ^ $3
 	} 
-	| t1 LMP relation_exp RMP %prec UUNIT
+    | t2
+    {
+        $1
+    }
+    ;
+
+t2:
+	t2 LMP relation_exp RMP %prec UUNIT
 	{
 		tmp := "{";
 		Stringmap.iter addstring $3;
@@ -366,50 +377,51 @@ t1
 		(*I suppose that's not correct*)
 		"PhyVar(" ^ $1 ^ "," ^ tmp.contents ^ ",True)"
 	}
-    | t2
-    {
-        $1
-    }
-    ;
+	| t3 {$1}
+	;
 
-t2  
-    : t2 PLUS t2 
+t3
+    : t3 PLUS t3 
 	{
 		$1 ^ "+" ^ $3
 	}
-	| t2 MINUS t2 
+	| t3 MINUS t3 
 	{
 		$1 ^ "-" ^ $3
 	}
-	| t2 MOD t2
+	| t3 MOD t3
 	{
 		$1 ^ "%" ^ $3
 	}
-	| t2 MULTI t2 
+	| t3 MULTI t3 
 	{
 		$1 ^ "*" ^ $3
 	}
-	| t2 DIV t2 
+	| t3 DIV t3 
 	{
 		$1 ^ "/" ^ $3
 	}
-	| t2 CROSS t2 
+	| t3 CROSS t3 
 	{
 		$1 ^ ".cross(" ^ $3 ^ ")"
 	}
-	| MINUS t2 %prec UMINUS
+	| MINUS t3 %prec UMINUS
 	{
 		"-" ^ $2
 	}
-    | t2 DOT ident
+    | t4 {$1}
+    ;
+
+t4:
+	t4 DOT IDENT
     {
         $1 ^ "." ^ $3
     }
-	| t2 LP p_list RP %prec UFUNC
+	| t4 LP p_list RP %prec UFUNC
 	{
 		$1 ^ "(" ^ $3 ^ ")"
  	}
-	| LP t2 RP 
+	| LP t1 RP 
 	{
 		"(" ^ $2 ^ ")"
 	}
@@ -417,18 +429,7 @@ t2
 	{
 		$1
 	}
-    ;
 	
-ident
-	: IDENT
-	{
-		$1
-	}
-	| ident LP p_list RP
-	{
-		$1 ^ "(" ^ $3 ^ ")"
-	}
-	;
 
 var
 	: num_exp
@@ -450,7 +451,7 @@ num_exp
 	{
 		$1
 	}
-	| LMP num_list LMP
+	| LMP num_list RMP
 	{
 		"(" ^ $2 ^ ")"
 	}
