@@ -8,7 +8,7 @@ for i in (5 + 5){
 	print(cnt);
 }
 
-for i in (2[N]/1[N], 10){
+for i in (int(2[N]/1[N]), 10){
 	a = i [N];
 	cnt = cnt + a;
 	print(cnt);

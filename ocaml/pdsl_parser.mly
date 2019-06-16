@@ -38,13 +38,16 @@ open String
         ASSIGN EQ GEQ LEQ GT LE NEQ
         %right ASSIGN
         %left LOG_AND
-        %left LOG_OR
+        %left LOG_OR 
+        %nonassoc ULOG_NOT
         %nonassoc NEQ EQ
         %nonassoc LEQ GEQ LE GT       /* lowest precedence */
+        %nonassoc UUNIT
         %left PLUS MINUS        /* lowest precedence */
         %left MOD MULTI DIV         /* medium precedence */
         %left CROSS
-        %nonassoc UMINUS ULOG_NOT
+        %left DOT UFUNC
+        %nonassoc UMINUS 
         %start main             /* the entry point */
         %type <int> main
 %%
@@ -326,6 +329,10 @@ t1
 	{
 		$1 ^ " or " ^ $3
 	}
+	| LOG_NOT t1 %prec ULOG_NOT
+	{
+		"not " ^ $2
+	}
 	| t1 EQ t1 
 	{
 		$1 ^ "==" ^ $3
@@ -350,6 +357,15 @@ t1
 	{
 		$1 ^ "<=" ^ $3
 	} 
+	| t1 LMP relation_exp RMP %prec UUNIT
+	{
+		tmp := "{";
+		Stringmap.iter addstring $3;
+		tmp := tmp.contents ^ "}";
+		(*what is the API?*)
+		(*I suppose that's not correct*)
+		"PhyVar(" ^ $1 ^ "," ^ tmp.contents ^ ",True)"
+	}
 	| t1 PLUS t1 
 	{
 		$1 ^ "+" ^ $3
@@ -378,34 +394,32 @@ t1
 	{
 		"-" ^ $2
 	}
-	| LOG_NOT t1 %prec ULOG_NOT
-	{
-		"not " ^ $2
-	}
-    | t2 
+    | t1 DOT dot_list 
     {
-        $1
+        $1 ^ '.' ^ $3
     }
-    ;
-t2
-	: t8
+	| t1 LP p_list RP %prec UFUNC
+	{
+		$1 ^ "(" ^ $3 ^ ")"
+ 	}
+	| LP t1 RP 
+	{
+		"(" ^ $2 ^ ")"
+	}
+	| var
 	{
 		$1
 	}
-	| t8 dot_list
-	{
-		$1 ^ $2
-	}
-	;
+    ;
 	
 dot_list
-	: DOT ident dot_list
+	: ident DOT dot_list
 	{
-		"." ^ $2 ^ $3
+		$1 ^ '.'^ $3
 	}
-	| DOT ident
+	| ident
 	{
-		"." ^ $2
+		$1
 	}
 	;
 	
@@ -418,30 +432,6 @@ ident
 	{
 		$1 ^ "(" ^ $3 ^ ")"
 	}
-	;
-
-t8 
-	: LP t1 RP 
-	{
-		"(" ^ $2 ^ ")"
-	}
-	| t1 LMP relation_exp RMP
-	{
-		tmp := "{";
-		Stringmap.iter addstring $3;
-		tmp := tmp.contents ^ "}";
-		(*what is the API?*)
-		(*I suppose that's not correct*)
-		"PhyVar(" ^ $1 ^ "," ^ tmp.contents ^ ",True)"
-	}
-	| var
-	{
-		$1
-	}
-	| t8 LP p_list RP
-	{
-		$1 ^ "(" ^ $3 ^ ")"
- 	}
 	;
 
 var

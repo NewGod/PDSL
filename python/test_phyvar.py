@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from pdsl.phyvar import PhyVar, compare_float, compare_unit
+from python.phyvar import PhyVar, compare_float, compare_unit
 import builtins
 import sys
 
@@ -18,7 +18,7 @@ class TestPhyVar(unittest.TestCase):
         self.assertEqual(compare_unit(self.unit, {}), True)
 
     def test_init(self):
-        with patch('pdsl.phyvar.decode_unit') as func:
+        with patch('python.phyvar.decode_unit') as func:
             func.return_value = (self.unit, 0.001)
             a = PhyVar(1, {'N': 1}, is_ori=True)
             func.assert_called_once_with({'N': 1})
@@ -26,7 +26,7 @@ class TestPhyVar(unittest.TestCase):
             self.assertEqual(a.val, 1000)
             self.assertEqual(a.is_vector, False)
 
-        with patch('pdsl.phyvar.decode_unit') as func:
+        with patch('python.phyvar.decode_unit') as func:
             a = PhyVar([1], self.unit)
             func.assert_not_called()
             self.assertDictEqual(a.unit, self.unit)
@@ -149,7 +149,7 @@ class TestPhyVar(unittest.TestCase):
         self.assertEqual(c.val, 4)
 
     def test_str(self):
-        with patch("pdsl.phyvar.encode_unit") as func:
+        with patch("python.phyvar.encode_unit") as func:
             func.return_value = {'N': 1}
             a = PhyVar([2, 0], self.unit)
             b = PhyVar([2], self.unit)
@@ -159,7 +159,7 @@ class TestPhyVar(unittest.TestCase):
             func.assert_called_with(self.unit)
 
     def test_format(self):
-        with patch('pdsl.phyvar.decode_unit') as func:
+        with patch('python.phyvar.decode_unit') as func:
             func.return_value = (self.unit, 0.001)
             a = PhyVar(1, {'N': 1}, True)
             self.assertEqual(a.format({'N': 1}), '1.0N')

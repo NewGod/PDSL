@@ -1,5 +1,5 @@
 from typing import Dict, Union, Tuple, List, Optional
-Unit = Dict[str, float]
+from python import Unit
 
 
 def check_name(unit: Union[str, Unit]):

@@ -1,4 +1,4 @@
 #!/bin/bash
-autopep8 -ri pdsl 
+autopep8 -ri python
 pytest 
 pytype ./

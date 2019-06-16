@@ -1,5 +1,6 @@
 from typing import Dict, Union, List, Optional
-from pdsl.phymanager import decode_unit, encode_unit, Unit, unit2str
+from python.phymanager import decode_unit, encode_unit, unit2str
+from python import Unit
 from copy import copy
 import numpy as np
 from numbers import Number
@@ -151,6 +152,17 @@ class PhyVar:
 
     def __str__(self) -> str:
         return str(self.val) + unit2str(encode_unit(self.unit))
+
+    def __float__(self) -> float:
+        if self.is_vector:
+            raise Exception('The variable should be a scalar')
+        for x in self.unit.values():
+            if x != 0:
+                raise Exception('The variable is not a number')
+        return self.val
+
+    def __int__(self) -> int:
+        return int(self.__float__())
 
     def set_val(self, var: 'PhyVar'):
         """

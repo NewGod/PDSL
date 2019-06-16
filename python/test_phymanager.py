@@ -1,6 +1,6 @@
 import unittest
-from pdsl.phymanager import add_var, add_subunit, add_relation, UnitInfo, delete_unit, decode_unit, encode_unit, unit2str
-import pdsl.phymanager as g
+from python.phymanager import add_var, add_subunit, add_relation, UnitInfo, delete_unit, decode_unit, encode_unit, unit2str
+import python.phymanager as g
 
 
 class TestGlob(unittest.TestCase):
