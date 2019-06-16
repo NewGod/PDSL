@@ -177,9 +177,14 @@ class PhyVar:
             self.comparable(var)
         except Exception as e:
             print(e)  # TODO: Need to distinguish output, warning and error
-        self.val = var.val
-        self.unit = var.unit
-        self.is_vector = var.is_vector
+        if isinstance(var, PhyVar):
+            self.val = var.val
+            self.unit = var.unit
+            self.is_vector = var.is_vector
+        else:
+            self.val = var
+            self.unit = {}
+            self.is_vector = isinstance(var, tuple)
         return
 
     def format(self, unit: Unit) -> str:

@@ -1,3 +1,6 @@
-a = 1;
-b = [1,2,3] [N];
-print(a*b);
+class Force {
+	name = N;
+}
+a = [1,1,1,1] [N];
+b = [1,2,3,4] [N];
+print(a * b);
