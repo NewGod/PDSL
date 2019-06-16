@@ -366,43 +366,50 @@ t1
 		(*I suppose that's not correct*)
 		"PhyVar(" ^ $1 ^ "," ^ tmp.contents ^ ",True)"
 	}
-	| t1 PLUS t1 
+    | t2
+    {
+        $1
+    }
+    ;
+
+t2  
+    : t2 PLUS t2 
 	{
 		$1 ^ "+" ^ $3
 	}
-	| t1 MINUS t1 
+	| t2 MINUS t2 
 	{
 		$1 ^ "-" ^ $3
 	}
-	| t1 MOD t1
+	| t2 MOD t2
 	{
 		$1 ^ "%" ^ $3
 	}
-	| t1 MULTI t1 
+	| t2 MULTI t2 
 	{
 		$1 ^ "*" ^ $3
 	}
-	| t1 DIV t1 
+	| t2 DIV t2 
 	{
 		$1 ^ "/" ^ $3
 	}
-	| t1 CROSS t1 
+	| t2 CROSS t2 
 	{
 		$1 ^ ".cross(" ^ $3 ^ ")"
 	}
-	| MINUS t1 %prec UMINUS
+	| MINUS t2 %prec UMINUS
 	{
 		"-" ^ $2
 	}
-    | t1 DOT dot_list 
+    | t2 DOT ident
     {
-        $1 ^ '.' ^ $3
+        $1 ^ "." ^ $3
     }
-	| t1 LP p_list RP %prec UFUNC
+	| t2 LP p_list RP %prec UFUNC
 	{
 		$1 ^ "(" ^ $3 ^ ")"
  	}
-	| LP t1 RP 
+	| LP t2 RP 
 	{
 		"(" ^ $2 ^ ")"
 	}
@@ -411,17 +418,6 @@ t1
 		$1
 	}
     ;
-	
-dot_list
-	: ident DOT dot_list
-	{
-		$1 ^ '.'^ $3
-	}
-	| ident
-	{
-		$1
-	}
-	;
 	
 ident
 	: IDENT
