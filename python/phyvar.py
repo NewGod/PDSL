@@ -4,6 +4,7 @@ from python import Unit
 from copy import copy
 import numpy as np
 from numbers import Number
+import logging
 
 """
 A variable formate list:
@@ -101,24 +102,34 @@ class PhyVar:
     def __sub__(self, var: 'PhyVar') -> 'PhyVar':
         return self.__add__(-var)
 
-    def __mul__(self, var: 'PhyVar') -> 'PhyVar':
-        if self.is_vector and var.is_vector:
-            if len(self.val) != len(var.val):
-                raise Exception("The two variable don't have the same dim")
-            val = sum((x*y for x, y in zip(self.val, var.val)))
-        elif not self.is_vector and not var.is_vector:
-            val = self.val * var.val
-        elif not self.is_vector and var.is_vector:
-            val = (self.val*y for y in var.val)
-        else:
-            val = (x * var.val for x in self.val)
-        unit = copy(self.unit)
-        for x, y in var.unit.items():
-            if x in unit:
-                unit[x] += y
+    def __mul__(self, var: Union['PhyVar', float]) -> 'PhyVar':
+        if isinstance(var, PhyVar):
+            if self.is_vector and var.is_vector:
+                if len(self.val) != len(var.val):
+                    raise Exception("The two variable don't have the same dim")
+                val = sum((x*y for x, y in zip(self.val, var.val)))
+            elif not self.is_vector and not var.is_vector:
+                val = self.val * var.val
+            elif not self.is_vector and var.is_vector:
+                val = (self.val*y for y in var.val)
             else:
-                unit[x] = y
-        return PhyVar(val, unit)
+                val = (x * var.val for x in self.val)
+            unit = copy(self.unit)
+            for x, y in var.unit.items():
+                if x in unit:
+                    unit[x] += y
+                else:
+                    unit[x] = y
+            return PhyVar(val, unit)
+        else:
+            if self.is_vector:
+                val = (x * var for x in self.val)
+            else:
+                val = self.val * var
+            return PhyVar(val, self.unit)
+
+    def __rmul__(self, var: Union['PhyVar', float]) -> 'PhyVar':
+        return self.__mul__(var)
 
     @classmethod
     def cross(cls, a: 'PhyVar', var: 'PhyVar') -> 'PhyVar':
@@ -176,7 +187,7 @@ class PhyVar:
         try:
             self.comparable(var)
         except Exception as e:
-            print(e)  # TODO: Need to distinguish output, warning and error
+            logging.warning(e)
         return var
 
     def format(self, unit: Unit) -> str:

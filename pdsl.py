@@ -11,7 +11,12 @@ def run(script_files):
         pass
     else:
         for script_file in script_files:
-            process = subprocess.Popen(['bin/pdsl'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            process = subprocess.Popen(
+                ['bin/pdsl'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
             process.stdin.write(bytes(script_file.read(), 'utf-8'))
             stdout, stderr = process.communicate()
             stdout = stdout.decode('utf-8')

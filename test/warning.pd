@@ -1,0 +1,21 @@
+class Mass{ 
+	name = kg;
+}
+class Distance{ 
+	name = m;
+}
+class Time{
+	name = s;
+}
+class Acceleration{
+	relation = Distance / Time ** 2;
+}
+class Force {
+	name = N;
+	relation = Acceleration * Mass;
+}
+
+a = 1[N];
+a = 1[kg*m/s**2];
+a = 1[kg]; #  warning
+a = 1[s] + 1[kg]; #  error
