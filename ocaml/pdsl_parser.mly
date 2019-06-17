@@ -3,6 +3,7 @@ let indent_cnt = ref 0;;
 let curr_idtstr = ref "";;
 let func_cnt = ref 0;;
 let curr_name = ref "";;
+let assign_value = ref "";;
 module Stringmap = Map.Make(String);;
 let var_table = ref Stringmap.empty;;
 let class_table = ref Stringmap.empty;;
@@ -38,13 +39,16 @@ open String
         ASSIGN EQ GEQ LEQ GT LE NEQ
         %right ASSIGN
         %left LOG_AND
-        %left LOG_OR
+        %left LOG_OR 
+        %nonassoc ULOG_NOT
         %nonassoc NEQ EQ
         %nonassoc LEQ GEQ LE GT       /* lowest precedence */
         %left PLUS MINUS        /* lowest precedence */
         %left MOD MULTI DIV         /* medium precedence */
         %left CROSS
-        %nonassoc UMINUS ULOG_NOT
+        %nonassoc UMINUS 
+        %left UFUNC DOT
+        %nonassoc UUNIT
         %start main             /* the entry point */
         %type <int> main
 %%
@@ -69,11 +73,9 @@ sentence
 class_def 
 	: 
 	basic_class_def
-		/*optional: RELATION ASSIGN relation_exp*/
-		maybe_name
-		maybe_relation 
-		/*optional: TYPE VECTOR/SCALAR (default: scalar)*/
-		single_assign_list
+	maybe_name
+	maybe_relation 
+	single_assign_list
 	RCP {}
 	;
 
@@ -126,7 +128,7 @@ relation:
 	{
 		$2
 	}
-	| relation POWER single_const_exp
+	| relation POWER ct2
 	{
 		Stringmap.map (mult $3) $1
 	}
@@ -176,7 +178,7 @@ single_assign
 func_def
 	: 
 	basic_func_def
-	code_block
+	code_block_return
 	{}
 	;
 
@@ -308,11 +310,17 @@ interval
 exp
 	: IDENT ASSIGN exp 
 	{
-		var_table := Stringmap.add $1 func_cnt.contents var_table.contents;
-		$1 ^ " = " ^ $3
+		if((Stringmap.find_opt $1 var_table.contents) == None)
+		then
+		(var_table := Stringmap.add $1 func_cnt.contents var_table.contents;
+		print_endline (curr_idtstr.contents ^ $1 ^ " = " ^ assign_value.contents))
+		else
+		print_endline (curr_idtstr.contents ^ $1 ^ " = " ^ $1 ^ ".set_val(" ^ assign_value.contents ^ ")");
+		""
 	}
 	| t1
 	{
+		assign_value := $1;
 		$1
 	}
 	;
@@ -325,6 +333,10 @@ t1
 	| t1 LOG_OR t1
 	{
 		$1 ^ " or " ^ $3
+	}
+	| LOG_NOT t1 %prec ULOG_NOT
+	{
+		"not " ^ $2
 	}
 	| t1 EQ t1 
 	{
@@ -350,99 +362,69 @@ t1
 	{
 		$1 ^ "<=" ^ $3
 	} 
-	| t1 PLUS t1 
-	{
-		$1 ^ "+" ^ $3
-	}
-	| t1 MINUS t1 
-	{
-		$1 ^ "-" ^ $3
-	}
-	| t1 MOD t1
-	{
-		$1 ^ "%" ^ $3
-	}
-	| t1 MULTI t1 
-	{
-		$1 ^ "*" ^ $3
-	}
-	| t1 DIV t1 
-	{
-		$1 ^ "/" ^ $3
-	}
-	| t1 CROSS t1 
-	{
-		$1 ^ ".cross(" ^ $3 ^ ")"
-	}
-	| MINUS t1 %prec UMINUS
-	{
-		"-" ^ $2
-	}
-	| LOG_NOT t1 %prec ULOG_NOT
-	{
-		"not " ^ $2
-	}
-    | t2 
+    | t3
     {
         $1
     }
     ;
-t2
-	: t8
-	{
-		$1
-	}
-	| t8 dot_list
-	{
-		$1 ^ $2
-	}
-	;
-	
-dot_list
-	: DOT ident dot_list
-	{
-		"." ^ $2 ^ $3
-	}
-	| DOT ident
-	{
-		"." ^ $2
-	}
-	;
-	
-ident
-	: IDENT
-	{
-		$1
-	}
-	| ident LP p_list RP
-	{
-		$1 ^ "(" ^ $3 ^ ")"
-	}
-	;
 
-t8 
-	: LP t1 RP 
+t3
+    : t3 PLUS t3 
 	{
-		"(" ^ $2 ^ ")"
+		$1 ^ "+" ^ $3
 	}
-	| t1 LMP relation_exp RMP
+	| t3 MINUS t3 
+	{
+		$1 ^ "-" ^ $3
+	}
+	| t3 MOD t3
+	{
+		$1 ^ "%" ^ $3
+	}
+	| t3 MULTI t3 
+	{
+		$1 ^ "*" ^ $3
+	}
+	| t3 DIV t3 
+	{
+		$1 ^ "/" ^ $3
+	}
+	| t3 CROSS t3 
+	{
+		$1 ^ ".cross(" ^ $3 ^ ")"
+	}
+	| MINUS t3 %prec UMINUS
+	{
+		"-" ^ $2
+	}
+    | t4 {$1}
+    ;
+
+t4:
+	t4 LMP relation_exp RMP %prec UUNIT
 	{
 		tmp := "{";
 		Stringmap.iter addstring $3;
 		tmp := tmp.contents ^ "}";
-		(*what is the API?*)
-		(*I suppose that's not correct*)
 		"PhyVar(" ^ $1 ^ "," ^ tmp.contents ^ ",True)"
+	}
+    | t4 DOT IDENT
+    {
+        $1 ^ "." ^ $3
+    }
+	| t4 LP p_list RP %prec UFUNC
+	{
+		$1 ^ "(" ^ $3 ^ ")"
+ 	}
+	| LP t1 RP 
+	{
+		"(" ^ $2 ^ ")"
 	}
 	| var
 	{
 		$1
 	}
-	| t8 LP p_list RP
-	{
-		$1 ^ "(" ^ $3 ^ ")"
- 	}
-	;
+	
 
 var
 	: num_exp
@@ -464,7 +446,7 @@ num_exp
 	{
 		$1
 	}
-	| LMP num_list LMP
+	| LMP num_list RMP
 	{
 		"(" ^ $2 ^ ")"
 	}

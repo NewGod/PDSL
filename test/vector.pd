@@ -1,1 +1,6 @@
-# test vector and scalar defination
+class Force {
+	name = N;
+}
+a = [1,2,3][N];
+b = [1,2,3][N];
+print(a * b);

@@ -1,23 +1,11 @@
 class Mass{ 
 	name = kg;
-	1kg = 1000g;
-	1kg = 0.001t;
 }
 class Distance{ 
 	name = m;
-	1000m = 1km;
-	1m = 10dm;
-	1dm = 10cm;
-	1cm = 1000mm;
 }
 class Time{
 	name = s;
-	60s = 1min;
-	60min = 1h;
-	24h = 1d;
-	365d = 1y;
-}
-class Empty{
 }
 class Acceleration{
 	relation = Distance / Time ** 2;
@@ -27,6 +15,7 @@ class Force {
 	relation = Acceleration * Mass;
 }
 
-a = 1 [g];
-b = 1 [kg];
-print(a + b);
+a = 1[N];
+a = 1[kg*m/s**2];
+a = 1[kg]; #  warning
+a = 1[s] + 1[kg]; #  error

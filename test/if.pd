@@ -1,7 +1,7 @@
 class Force{
 	name = N;
 }
-a = 1N;
+a = 1[N];
 if (a == 1[N]){ 
 	print("True");
 }else{
@@ -17,5 +17,3 @@ if (a == 1[N]){
 if ((a == 1[N] or not a == 2[N]) and a == 1[N]) {
 	print("True");
 }
-
-# STDOUT: True True True 
