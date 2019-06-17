@@ -4,6 +4,8 @@ import subprocess
 from python import PhyVar
 import python.phymanager as Phymanager
 import logging
+
+
 @click.command()
 @click.argument('script-files', type=click.File('r'), nargs=-1)
 def run(script_files):

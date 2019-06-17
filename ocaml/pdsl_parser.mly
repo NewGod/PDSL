@@ -43,13 +43,12 @@ open String
         %nonassoc ULOG_NOT
         %nonassoc NEQ EQ
         %nonassoc LEQ GEQ LE GT       /* lowest precedence */
-        %nonassoc UUNIT
         %left PLUS MINUS        /* lowest precedence */
         %left MOD MULTI DIV         /* medium precedence */
         %left CROSS
-        %left UFUNC
-        %left DOT
         %nonassoc UMINUS 
+        %left UFUNC DOT
+        %nonassoc UUNIT
         %start main             /* the entry point */
         %type <int> main
 %%
@@ -363,22 +362,11 @@ t1
 	{
 		$1 ^ "<=" ^ $3
 	} 
-    | t2
+    | t3
     {
         $1
     }
     ;
-
-t2:
-	t2 LMP relation_exp RMP %prec UUNIT
-	{
-		tmp := "{";
-		Stringmap.iter addstring $3;
-		tmp := tmp.contents ^ "}";
-		"PhyVar(" ^ $1 ^ "," ^ tmp.contents ^ ",True)"
-	}
-	| t3 {$1}
-	;
 
 t3
     : t3 PLUS t3 
@@ -413,7 +401,14 @@ t3
     ;
 
 t4:
-	t4 DOT IDENT
+	t4 LMP relation_exp RMP %prec UUNIT
+	{
+		tmp := "{";
+		Stringmap.iter addstring $3;
+		tmp := tmp.contents ^ "}";
+		"PhyVar(" ^ $1 ^ "," ^ tmp.contents ^ ",True)"
+	}
+    | t4 DOT IDENT
     {
         $1 ^ "." ^ $3
     }

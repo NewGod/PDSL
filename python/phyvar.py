@@ -184,10 +184,11 @@ class PhyVar:
         else:
             a = balabala
         """
-        try:
-            self.comparable(var)
-        except Exception as e:
-            logging.warning(e)
+        if isinstance(var, PhyVar):
+            try:
+                self.comparable(var)
+            except Exception as e:
+                logging.warning(e)
         return var
 
     def format(self, unit: Unit) -> str:
