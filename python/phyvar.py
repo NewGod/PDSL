@@ -164,7 +164,7 @@ class PhyVar:
     def __int__(self) -> int:
         return int(self.__float__())
 
-    def set_val(self, var: 'PhyVar'):
+    def set_val(self, var):
         """
         a = balabala
         ==========>
@@ -177,15 +177,7 @@ class PhyVar:
             self.comparable(var)
         except Exception as e:
             print(e)  # TODO: Need to distinguish output, warning and error
-        if isinstance(var, PhyVar):
-            self.val = var.val
-            self.unit = var.unit
-            self.is_vector = var.is_vector
-        else:
-            self.val = var
-            self.unit = {}
-            self.is_vector = isinstance(var, tuple)
-        return
+        return var
 
     def format(self, unit: Unit) -> str:
         """
