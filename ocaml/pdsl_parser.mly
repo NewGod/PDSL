@@ -3,7 +3,7 @@ let indent_cnt = ref 0;;
 let curr_idtstr = ref "";;
 let func_cnt = ref 0;;
 let curr_name = ref "";;
-let assgin_value = ref "";;
+let assign_value = ref "";;
 module Stringmap = Map.Make(String);;
 let var_table = ref Stringmap.empty;;
 let class_table = ref Stringmap.empty;;
@@ -74,11 +74,9 @@ sentence
 class_def 
 	: 
 	basic_class_def
-		/*optional: RELATION ASSIGN relation_exp*/
-		maybe_name
-		maybe_relation 
-		/*optional: TYPE VECTOR/SCALAR (default: scalar)*/
-		single_assign_list
+	maybe_name
+	maybe_relation 
+	single_assign_list
 	RCP {}
 	;
 
@@ -313,14 +311,17 @@ interval
 exp
 	: IDENT ASSIGN exp 
 	{
-		var_table := Stringmap.add $1 func_cnt.contents var_table.contents;
-		print_endline (curr_idtstr.contents ^ $1 ^ " = PhyVar(0, {}, True)");
-		print_endline (curr_idtstr.contents ^ $1 ^ ".set_val(" ^ assgin_value.contents ^ ")");
+		if((Stringmap.find_opt $1 var_table.contents) == None)
+		then
+		(var_table := Stringmap.add $1 func_cnt.contents var_table.contents;
+		print_endline (curr_idtstr.contents ^ $1 ^ " = " ^ assign_value.contents))
+		else
+		print_endline (curr_idtstr.contents ^ $1 ^ " = " ^ $1 ^ ".set_val(" ^ assign_value.contents ^ ")");
 		""
 	}
 	| t1
 	{
-		assgin_value := $1;
+		assign_value := $1;
 		$1
 	}
 	;
@@ -374,8 +375,6 @@ t2:
 		tmp := "{";
 		Stringmap.iter addstring $3;
 		tmp := tmp.contents ^ "}";
-		(*what is the API?*)
-		(*I suppose that's not correct*)
 		"PhyVar(" ^ $1 ^ "," ^ tmp.contents ^ ",True)"
 	}
 	| t3 {$1}
