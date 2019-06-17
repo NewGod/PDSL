@@ -23,6 +23,7 @@ let whitespace = [' ' '\t' '\r' '\n']+
 let string = shortbytes | longbytes
 let newline = '\n'
 let num = int | float
+let comment = "#" ([^ '\r' '\n']|bytesescapeseq)* "\n"
 
 
 rule token = parse
@@ -70,7 +71,7 @@ whitespace {token lexbuf}
 | "/" {DIV}
 | "%" {MOD}
 
-| "#" {COMMENT} 
+| comment {token lexbuf} 
 
 | "(" {LP} 
 | ")" {RP} 

@@ -26,3 +26,7 @@ class Force {
 	name = N;
 	relation = Acceleration * Mass;
 }
+
+a = 1 [g];
+b = 1 [kg];
+print(a + b);
